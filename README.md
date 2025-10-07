@@ -50,7 +50,7 @@ The main dashboard provides an overview of your current meal plan, recent recipe
 ### Recipe Browser
 Discover authentic recipes filtered by cuisine, difficulty, dietary restrictions, and Ayurvedic dosha compatibility.
 
-![Recipe Browser](claudedocs/screenshots/recipes.png)
+![Recipe Browser](claudedocs/screenshots/recipes.jpeg)
 *Recipe browser with cultural filters and search functionality*
 
 ### Recipe Detail View
