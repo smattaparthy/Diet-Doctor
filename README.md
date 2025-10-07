@@ -1,6 +1,26 @@
-# Cultural Diet Doctor App Backend
+# Cultural Diet Doctor - Culturally-Aware Meal Planning Application
 
-A comprehensive backend system for managing cultural dietary preferences, Ayurvedic nutrition, and traditional food practices with local-first operation using SQLite.
+A comprehensive local-first application for managing cultural dietary preferences, Ayurvedic nutrition, and traditional food practices. Generate personalized meal plans, discover culturally authentic recipes, and create retailer-organized shopping lists—all while respecting your dietary restrictions and cultural background.
+
+![Application Status](https://img.shields.io/badge/status-active-success)
+![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
+![Database](https://img.shields.io/badge/database-SQLite-blue)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
+## 📖 Table of Contents
+
+- [Features](#-features)
+- [Screenshots](#-screenshots)
+- [Architecture](#-architecture)
+- [Getting Started](#-getting-started)
+- [API Documentation](#-api-documentation)
+- [Cultural Rules Engine](#-cultural-rules-engine)
+- [Database Schema](#-database-schema)
+- [Security Features](#-security-features)
+- [Development](#-development)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 🌟 Features
 
@@ -18,6 +38,46 @@ A comprehensive backend system for managing cultural dietary preferences, Ayurve
 - **Multi-Cultural**: North Indian, South Indian, Mughlai, Gujarati, and international cuisines
 - **Retailer Integration**: Patel Brothers, Subzi Mandi, Hanuman, Trader Joe's
 - **Dietary Restrictions**: Vegetarian, vegan, medical restrictions, cultural requirements
+
+## 📸 Screenshots
+
+### Dashboard
+The main dashboard provides an overview of your current meal plan, recent recipes, and quick actions.
+
+![Dashboard](claudedocs/screenshots/dashboard.png)
+*Dashboard showing weekly meal plan overview, recipe suggestions, and quick navigation*
+
+### Recipe Browser
+Discover authentic recipes filtered by cuisine, difficulty, dietary restrictions, and Ayurvedic dosha compatibility.
+
+![Recipe Browser](claudedocs/screenshots/recipes.png)
+*Recipe browser with cultural filters and search functionality*
+
+### Recipe Detail View
+Detailed recipe view with ingredients, step-by-step cooking instructions, nutritional information, and Ayurvedic guidance.
+
+![Recipe Detail](claudedocs/screenshots/recipe-detail.png)
+*Recipe detail page showing Punjabi Tandoori Chicken with complete cooking instructions*
+
+### Meal Plan Generator
+Generate personalized 7-day meal plans based on your cultural preferences, dietary restrictions, and Ayurvedic dosha.
+
+![Meal Plan](claudedocs/screenshots/meal-plan.png)
+*Weekly meal plan with breakfast, lunch, and dinner for 7 days*
+
+### Shopping List
+Automatically generate shopping lists from meal plans, organized by retailer and aisle for efficient shopping.
+
+![Shopping List](claudedocs/screenshots/shopping-list.png)
+*Shopping list grouped by retailer (Patel Brothers, Trader Joe's, Costco) with aisle organization*
+
+### Settings & Profile
+Manage your profile, cuisine preferences, dietary restrictions, Ayurvedic dosha, and account settings.
+
+![Settings](claudedocs/screenshots/settings.png)
+*User settings page with profile management, preferences, and password change*
+
+---
 
 ## 🏗️ Architecture
 
@@ -113,63 +173,45 @@ The server will start on `http://localhost:3000`
 
 ## 📚 API Documentation
 
-### Base URLs
-- **Development**: `http://localhost:3000/api/v1`
-- **Health Check**: `http://localhost:3000/health`
+### Quick Reference
 
-### Authentication
-All authenticated endpoints require a JWT token in the Authorization header:
+**Base URLs:**
+- Development: `http://localhost:3000/api/v1`
+- Health Check: `http://localhost:3000/health`
+
+**Authentication:**
 ```
 Authorization: Bearer <your-jwt-token>
 ```
 
-### Core Endpoints
+### API Endpoints Overview
 
-#### User Management
-- `POST /auth/register` - User registration
-- `POST /auth/login` - User login
-- `GET /users/profile` - Get user profile
-- `PUT /users/profile` - Update user profile
-- `POST /users/change-password` - Change password
-- `DELETE /users/account` - Delete account
+| Category | Endpoint | Method | Auth | Description |
+|----------|----------|--------|------|-------------|
+| **Auth** | `/auth/register` | POST | ❌ | Create new account |
+| | `/auth/login` | POST | ❌ | User login |
+| | `/auth/refresh` | POST | ✅ | Refresh JWT token |
+| **User** | `/users/profile` | GET | ✅ | Get user profile |
+| | `/users/profile` | PUT | ✅ | Update profile |
+| | `/users/change-password` | POST | ✅ | Change password |
+| | `/users/account` | DELETE | ✅ | Delete account |
+| **Recipes** | `/recipes` | GET | ✅ | Search recipes |
+| | `/recipes/:id` | GET | ✅ | Recipe details |
+| | `/recipes` | POST | ✅ | Create recipe |
+| | `/recipes/:id/favorite` | POST | ✅ | Add to favorites |
+| | `/recipes/:id/rate` | POST | ✅ | Rate recipe |
+| **Meal Plans** | `/meal-plans/generate` | POST | ✅ | Generate meal plan |
+| | `/meal-plans` | GET | ✅ | Get meal plans |
+| | `/meal-plans/:date` | GET | ✅ | Get plan by date |
+| | `/meal-plans/stats` | GET | ✅ | Get statistics |
+| **Shopping** | `/shopping-lists` | POST | ✅ | Create list |
+| | `/shopping-lists/:id` | GET | ✅ | Get list details |
+| | `/shopping-lists/:id/items` | POST | ✅ | Add item |
+| **Cultural** | `/cultural-rules` | GET | ❌ | Get dietary rules |
+| | `/cultural-rules/validate-recipe/:id` | POST | ✅ | Validate recipe |
+| | `/cultural-rules/substitutions` | GET | ❌ | Get substitutes |
 
-#### Recipes
-- `GET /recipes` - Search recipes with cultural filters
-- `GET /recipes/:id` - Get recipe details
-- `GET /recipes/favorites` - Get user's favorite recipes
-- `POST /recipes/:id/favorite` - Add to favorites
-- `POST /recipes/:id/rate` - Rate recipe
-- `POST /recipes` - Create new recipe
-
-#### Meal Planning
-- `POST /meal-plans/generate` - Generate meal plan
-- `GET /meal-plans` - Get user's meal plans
-- `GET /meal-plans/:date` - Get meal plan for specific date
-- `PUT /meal-plans/:date` - Update meal plan
-- `GET /meal-plans/stats` - Get meal planning statistics
-
-#### Shopping Lists
-- `POST /shopping-lists` - Create shopping list
-- `GET /shopping-lists` - Get user's shopping lists
-- `GET /shopping-lists/:id` - Get shopping list details
-- `POST /shopping-lists/:id/items` - Add item to list
-- `PATCH /shopping-lists/:id/items/:itemId` - Update item status
-- `POST /shopping-lists/from-meal-plan` - Generate from meal plan
-
-#### Product Catalog
-- `GET /products` - Search products
-- `GET /products/retailers` - Get retailer information
-- `GET /products/categories` - Get product categories
-- `GET /products/price-comparison` - Compare prices across retailers
-- `GET /products/:retailer/:sku` - Get specific product
-
-#### Cultural Rules
-- `GET /cultural-rules` - Get cultural dietary rules
-- `POST /cultural-rules/validate-recipe/:recipeId` - Validate recipe compliance
-- `POST /cultural-rules/validate-ingredient` - Validate ingredient
-- `GET /cultural-rules/substitutions` - Get ingredient substitutes
-- `GET /cultural-rules/ayurvedic-recommendations` - Get Ayurvedic guidance
-- `GET /cultural-rules/hindu-dietary-guidance` - Get Hindu dietary principles
+📖 **Full API Documentation**: See [claudedocs/API.md](claudedocs/API.md) for complete endpoint details, request/response examples, and error codes
 
 ## 🧘 Cultural Rules Engine
 
@@ -202,20 +244,41 @@ Authorization: Bearer <your-jwt-token>
 
 ## 📊 Database Schema
 
-### Core Tables
-- `users` - User profiles with cultural preferences
-- `recipes` - Recipe database with cultural metadata
-- `meal_plans` - User meal planning data
-- `shopping_lists` - Shopping lists with retailer grouping
-- `product_catalog` - Multi-retailer product database
-- `cultural_rules` - Dietary and cultural restriction rules
+### Schema Overview
 
-### Relationships
-- User → Meal Plans (1:N)
-- User → Shopping Lists (1:N)
-- User → Recipe Favorites (M:N)
-- Product → Cultural Tags (M:N)
-- Recipes → Ayurvedic Properties (1:1)
+**Database**: SQLite 3.x (local-first, single-file storage)
+
+**Core Tables:**
+
+| Table | Rows | Purpose | Key Relations |
+|-------|------|---------|---------------|
+| `users` | 100s | User accounts & preferences | → meal_plans, shopping_lists |
+| `recipes` | 1000s | Recipe database | ← favorites, meal_plans |
+| `product_catalog` | 10,000s | Multi-retailer products | ← shopping_lists |
+| `meal_plans` | 1000s | Daily meal assignments | users ←, recipes → |
+| `shopping_lists` | 100s | Shopping list items | users ← |
+| `cultural_rules` | 10s | Dietary restrictions | Reference data |
+| `user_recipe_favorites` | 1000s | User favorites junction | users ←, recipes ← |
+| `meal_plan_history` | 10,000s | Meal history & ratings | users ←, recipes ← |
+
+### Key Relationships
+```
+users (1) ──→ (N) meal_plans
+users (1) ──→ (N) shopping_lists
+users (M) ←→ (N) recipes (via favorites)
+recipes (1) ──→ (N) meal_plan_items
+weekly_meal_plans (1) ──→ (N) meal_plan_items
+```
+
+### JSON Field Storage
+
+Several fields use JSON for flexible data structures:
+- **users**: `cuisine_preferences`, `dietary_restrictions`
+- **recipes**: `ingredients`, `instructions`, `ayurvedic_info`, `nutritional_info`
+- **product_catalog**: `cultural_tags`, `dietary_certifications`
+- **meal_plans**: meal objects (breakfast/lunch/dinner/snack)
+
+📖 **Complete Schema Documentation**: See [claudedocs/DATABASE.md](claudedocs/DATABASE.md) for detailed table structures, indexes, and relationships
 
 ## 🔒 Security Features
 
@@ -290,6 +353,73 @@ npm run seed:reset   # Reset and reseed
 - Community consultation for new cultural additions
 - Proper attribution for traditional knowledge
 
+## 📚 Documentation
+
+### Complete Documentation Suite
+
+| Document | Description | Link |
+|----------|-------------|------|
+| **API Documentation** | Complete API endpoint reference with examples | [claudedocs/API.md](claudedocs/API.md) |
+| **Architecture Guide** | System architecture, design patterns, data flow | [claudedocs/ARCHITECTURE.md](claudedocs/ARCHITECTURE.md) |
+| **Database Schema** | Detailed schema, relationships, performance | [claudedocs/DATABASE.md](claudedocs/DATABASE.md) |
+| **README** | Project overview and quick start | This file |
+
+### Quick Links
+
+- 🐛 **Report Issues**: [GitHub Issues](https://github.com/your-org/diet-doctor/issues)
+- 💡 **Request Features**: [Feature Requests](https://github.com/your-org/diet-doctor/issues/new)
+- 📖 **API Reference**: [claudedocs/API.md](claudedocs/API.md)
+- 🏗️ **Architecture**: [claudedocs/ARCHITECTURE.md](claudedocs/ARCHITECTURE.md)
+
+## 🤝 Contributing
+
+### Development Workflow
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+### Code Standards
+
+- **TypeScript**: Strict mode enforced
+- **Testing**: Comprehensive test coverage required
+- **Cultural Accuracy**: Mandatory for all recipe and cultural data
+- **Documentation**: Update docs for new features
+
+### Cultural Sensitivity Guidelines
+
+- Respect for all dietary traditions required
+- Accurate representation of cultural practices
+- Community consultation for new cultural additions
+- Proper attribution for traditional knowledge
+
+## 🔮 Future Enhancements
+
+### Planned Features
+
+- [ ] **Mobile App**: React Native mobile application
+- [ ] **Cloud Sync**: Optional encrypted cloud backup (end-to-end)
+- [ ] **Recipe Sharing**: Community recipe sharing with moderation
+- [ ] **Nutrition Tracking**: Advanced nutritional analytics
+- [ ] **Grocery Delivery**: Integration with online grocery services
+- [ ] **Voice Commands**: Voice-controlled recipe instructions
+- [ ] **Meal Prep Mode**: Batch cooking and meal prep planning
+- [ ] **Family Profiles**: Multiple user profiles per household
+- [ ] **Allergen Warnings**: Enhanced allergen detection and warnings
+- [ ] **Smart Scaling**: Automatic recipe scaling for serving size
+
+### Technical Roadmap
+
+- [ ] Automated testing suite (Jest + Supertest)
+- [ ] Database migration framework
+- [ ] Performance monitoring and analytics
+- [ ] Electron desktop packaging
+- [ ] Docker production optimization
+- [ ] CI/CD pipeline setup
+- [ ] End-to-end testing with Playwright
+
 ## 📄 License
 
 MIT License - See LICENSE file for details
@@ -300,5 +430,10 @@ MIT License - See LICENSE file for details
 - Ayurvedic practitioners and nutritionists
 - Community members providing authentic recipes
 - Retail partners for product information
+- Open source community for excellent tools and libraries
 
-Built with ❤️ for cultural preservation and dietary freedom.
+---
+
+**Built with ❤️ for cultural preservation and dietary freedom**
+
+*For support, questions, or feedback, please [open an issue](https://github.com/your-org/diet-doctor/issues)*
