@@ -388,3 +388,122 @@ export interface BalanceMetrics {
   culturalAuthenticity: number; // 0-1
   nutritionalBalance: number; // 0-1
 }
+
+// ============================================================================
+// Health Profile Types (for Ayurvedic Profiling System)
+// ============================================================================
+
+export interface UserHealthProfile {
+  id?: number;
+  user_id: number;
+
+  // Prakriti (constitutional type - birth constitution)
+  prakriti_vata: number;  // 0-100
+  prakriti_pitta: number; // 0-100
+  prakriti_kapha: number; // 0-100
+
+  // Vikriti (current state - may differ from prakriti)
+  vikriti_vata: number;  // 0-100
+  vikriti_pitta: number; // 0-100
+  vikriti_kapha: number; // 0-100
+
+  // Primary dosha type determined from questionnaire
+  primary_dosha: string; // 'vata', 'pitta', 'kapha', 'vata-pitta', etc.
+
+  // Health and dietary information (JSON arrays)
+  allergies: string[];  // ['dairy', 'nuts', 'shellfish']
+  dietary_restrictions: string[];  // ['vegetarian', 'no-beef', 'gluten-free']
+  health_concerns: string[];  // ['digestion', 'weight-management', 'energy']
+
+  // Preferences (JSON arrays)
+  cuisine_preferences: string[];  // ['north_indian', 'mediterranean']
+  spice_level: 'mild' | 'medium' | 'hot';
+  activity_level: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+  stress_level: 'low' | 'moderate' | 'high';
+  sleep_quality: 'poor' | 'fair' | 'good' | 'excellent';
+
+  // Timestamps
+  assessment_completed_at?: string;
+  last_updated_at?: string;
+  created_at?: string;
+}
+
+export interface UserHealthProfileRow {
+  id: number;
+  user_id: number;
+  prakriti_vata: number;
+  prakriti_pitta: number;
+  prakriti_kapha: number;
+  vikriti_vata: number;
+  vikriti_pitta: number;
+  vikriti_kapha: number;
+  primary_dosha: string;
+  allergies: string;  // JSON
+  dietary_restrictions: string;  // JSON
+  health_concerns: string;  // JSON
+  cuisine_preferences: string;  // JSON
+  spice_level: string;
+  activity_level: string;
+  stress_level: string;
+  sleep_quality: string;
+  assessment_completed_at: string | null;
+  last_updated_at: string;
+  created_at: string;
+}
+
+// ============================================================================
+// Recipe Filtering & Recommendation Types
+// ============================================================================
+
+export interface FilterConstraints {
+  allergens: string[];  // Must be excluded
+  dietaryRestrictions: string[];  // Must be respected
+  culturalRestrictions: string[];  // Religious/cultural requirements
+  maxPrepTime?: number;  // Optional time constraint
+  maxCookTime?: number;  // Optional time constraint
+}
+
+export interface RecipeScore {
+  recipeId: number;
+  totalScore: number;  // 0-100
+  doshaScore: number;  // 0-100 (40% weight)
+  preferenceScore: number;  // 0-100 (30% weight)
+  healthScore: number;  // 0-100 (30% weight)
+  explanation: string;  // Human-readable reason for recommendation
+}
+
+export interface ScoredRecipe extends Recipe {
+  score: RecipeScore;
+}
+
+export interface RecommendationOptions {
+  limit?: number;  // Number of recommendations to return
+  cuisineFilter?: CuisineType[];  // Optional cuisine filter
+  minScore?: number;  // Minimum threshold score
+  includePenalizedRecipes?: boolean;  // Include recipes with negative dosha effects
+}
+
+export interface RecommendationResult {
+  recipes: ScoredRecipe[];
+  userProfile: UserHealthProfile;
+  metadata: {
+    totalEvaluated: number;
+    filteredOut: number;
+    recommendationCount: number;
+    cacheHit: boolean;
+    generatedAt: string;
+  };
+}
+
+export interface DoshaCompatibility {
+  vata: 'increase' | 'decrease' | 'neutral';
+  pitta: 'increase' | 'decrease' | 'neutral';
+  kapha: 'increase' | 'decrease' | 'neutral';
+}
+
+export interface HealthGoalMapping {
+  goal: string;  // e.g., 'weight-management', 'digestion', 'energy'
+  beneficialTastes: string[];  // Ayurvedic tastes that help
+  beneficialQualities: string[];  // Ayurvedic qualities that help
+  doshaRecommendations: string[];  // Which doshas to balance
+}

@@ -1,0 +1,490 @@
+{
+  "version": "1.0.0",
+  "description": "Ayurvedic Dosha Assessment Questionnaire - 12 questions across 4 sections",
+  "sections": [
+    {
+      "id": "basic",
+      "title": "Basic Profile",
+      "description": "General information about your constitution",
+      "questions": [
+        {
+          "id": "q1_body_frame",
+          "section": "basic",
+          "text": "Which best describes your natural body frame?",
+          "type": "single",
+          "options": [
+            {
+              "text": "Slim/thin, hard to gain weight",
+              "doshaPoints": {
+                "vata": 2,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Athletic/medium build",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 2,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Stocky/solid, easy to gain weight",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "q2_skin_type",
+          "section": "basic",
+          "text": "How would you describe your skin?",
+          "type": "single",
+          "options": [
+            {
+              "text": "Dry, rough, or thin",
+              "doshaPoints": {
+                "vata": 2,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Warm, oily, prone to breakouts",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 2,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Smooth, cool, thick",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "physical",
+      "title": "Physical Constitution",
+      "description": "Physical characteristics and patterns",
+      "questions": [
+        {
+          "id": "q3_digestion",
+          "section": "physical",
+          "text": "Which best describes your digestion?",
+          "type": "single",
+          "options": [
+            {
+              "text": "Irregular, gas/bloating",
+              "doshaPoints": {
+                "vata": 2,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Strong appetite, gets irritable when hungry",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 2,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Slow, feels heavy after meals",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "q4_energy_levels",
+          "section": "physical",
+          "text": "How would you describe your energy throughout the day?",
+          "type": "single",
+          "options": [
+            {
+              "text": "Comes in bursts, easily fatigued",
+              "doshaPoints": {
+                "vata": 2,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Strong, intense, sustained",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 2,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Steady, enduring, slow to start",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "q5_temperature_preference",
+          "section": "physical",
+          "text": "Which temperature do you prefer?",
+          "type": "single",
+          "options": [
+            {
+              "text": "I feel cold easily, prefer warmth",
+              "doshaPoints": {
+                "vata": 2,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "I feel hot easily, prefer cool",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 2,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "I'm comfortable in most temperatures",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "q6_activity_level",
+          "section": "physical",
+          "text": "How active are you?",
+          "type": "single",
+          "options": [
+            {
+              "text": "Very active, restless, always on the go",
+              "doshaPoints": {
+                "vata": 1,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Moderately active, focused exercise",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 1,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Prefer gentle activity, sedentary",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mental",
+      "title": "Mental & Emotional Patterns",
+      "description": "Mental characteristics and emotional responses",
+      "questions": [
+        {
+          "id": "q7_stress_response",
+          "section": "mental",
+          "text": "How do you typically respond to stress?",
+          "type": "single",
+          "options": [
+            {
+              "text": "Anxious, worried, fearful",
+              "doshaPoints": {
+                "vata": 2,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Irritable, frustrated, angry",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 2,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Withdrawn, sluggish, depressed",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "q8_sleep_patterns",
+          "section": "mental",
+          "text": "How is your sleep?",
+          "type": "single",
+          "options": [
+            {
+              "text": "Light, interrupted, difficulty falling asleep",
+              "doshaPoints": {
+                "vata": 2,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Moderate, wake up hot or thirsty",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 2,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Deep, long, hard to wake up",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "q9_decision_making",
+          "section": "mental",
+          "text": "How do you make decisions?",
+          "type": "single",
+          "options": [
+            {
+              "text": "Quickly, but often change mind",
+              "doshaPoints": {
+                "vata": 2,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Decisively, with confidence",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 2,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Slowly, after careful thought",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lifestyle",
+      "title": "Lifestyle & Preferences",
+      "description": "Lifestyle patterns and food preferences",
+      "questions": [
+        {
+          "id": "q10_food_preferences",
+          "section": "lifestyle",
+          "text": "Which tastes do you naturally crave? (Select all that apply)",
+          "type": "multi",
+          "options": [
+            {
+              "text": "Sweet foods",
+              "doshaPoints": {
+                "vata": 1,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Sour foods",
+              "doshaPoints": {
+                "vata": 1,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Salty foods",
+              "doshaPoints": {
+                "vata": 1,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Bitter foods",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 1,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Astringent foods",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 1,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Pungent/spicy foods",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "q11_health_concerns",
+          "section": "lifestyle",
+          "text": "Do you experience any of these? (Select all that apply)",
+          "type": "multi",
+          "options": [
+            {
+              "text": "Anxiety or nervousness",
+              "doshaPoints": {
+                "vata": 1,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Digestive issues (gas, constipation)",
+              "doshaPoints": {
+                "vata": 1,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Inflammation or skin issues",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 1,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Anger or irritability",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 1,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Weight gain or sluggishness",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 1
+              }
+            },
+            {
+              "text": "Congestion or excess mucus",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "q12_health_goal",
+          "section": "lifestyle",
+          "text": "What is your primary health goal?",
+          "type": "single",
+          "options": [
+            {
+              "text": "Reduce stress and anxiety",
+              "doshaPoints": {
+                "vata": 1,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Improve digestion",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 1,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Increase energy",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 1
+              }
+            },
+            {
+              "text": "Better sleep",
+              "doshaPoints": {
+                "vata": 1,
+                "pitta": 0,
+                "kapha": 0
+              }
+            },
+            {
+              "text": "Weight management",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 1
+              }
+            },
+            {
+              "text": "Overall balance and wellness",
+              "doshaPoints": {
+                "vata": 0,
+                "pitta": 0,
+                "kapha": 0
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

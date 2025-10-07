@@ -14,6 +14,7 @@ import { validateRequest } from './middleware/validation.middleware';
 // Import controllers
 import { UserController } from './controllers/user.controller';
 import { RecipeController } from './controllers/recipe.controller';
+import { HealthProfileController } from './controllers/health-profile.controller';
 import { MealPlanController } from './controllers/meal-plan.controller';
 import { mealPlanController as enhancedMealPlanController } from './controllers/MealPlanController';
 import { shareController } from './controllers/ShareController';
@@ -33,6 +34,7 @@ const PORT = process.env.PORT || 3000;
 // Initialize controllers
 const userController = new UserController();
 const recipeController = new RecipeController();
+const healthProfileController = new HealthProfileController();
 const mealPlanController = new MealPlanController();
 const shoppingListController = new ShoppingListController();
 const productCatalogController = new ProductCatalogController();
@@ -128,6 +130,31 @@ apiRouter.delete('/users/account',
   userController.deleteAccount
 );
 
+// Health Profile routes
+apiRouter.get('/users/dosha-assessment/questions',
+  healthProfileController.getQuestions
+);
+
+apiRouter.post('/users/dosha-assessment',
+  authenticate,
+  healthProfileController.submitDoshaAssessment
+);
+
+apiRouter.get('/users/health-profile',
+  authenticate,
+  healthProfileController.getHealthProfile
+);
+
+apiRouter.post('/users/health-profile',
+  authenticate,
+  healthProfileController.updateHealthProfile
+);
+
+apiRouter.get('/users/dosha-balance',
+  authenticate,
+  healthProfileController.getDoshaBalance
+);
+
 // Recipe routes
 apiRouter.get('/recipes',
   optionalAuth,
@@ -162,6 +189,27 @@ apiRouter.delete('/recipes/:id/favorite',
 apiRouter.post('/recipes/:id/rate',
   authenticate,
   recipeController.rateRecipe
+);
+
+// Recipe recommendation routes
+apiRouter.get('/recipes/recommended',
+  authenticate,
+  recipeController.getRecommendations
+);
+
+apiRouter.get('/recipes/for-dosha/:dosha',
+  recipeController.getRecipesForDosha
+);
+
+// Recipe interaction tracking routes
+apiRouter.post('/recipes/:id/feedback',
+  authenticate,
+  recipeController.submitFeedback
+);
+
+apiRouter.post('/recipes/:id/interaction',
+  authenticate,
+  recipeController.trackRecipeInteraction
 );
 
 // Meal planning routes
