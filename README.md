@@ -1,4 +1,4 @@
-# Cultural Diet App Backend
+# Cultural Diet Doctor App Backend
 
 A comprehensive backend system for managing cultural dietary preferences, Ayurvedic nutrition, and traditional food practices with local-first operation using SQLite.
 
