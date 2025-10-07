@@ -44,13 +44,13 @@ A comprehensive local-first application for managing cultural dietary preference
 ### Dashboard
 The main dashboard provides an overview of your current meal plan, recent recipes, and quick actions.
 
-![Dashboard](claudedocs/screenshots/dashboard.png)
+![Dashboard](claudedocs/screenshots/dashboard.jpeg)
 *Dashboard showing weekly meal plan overview, recipe suggestions, and quick navigation*
 
 ### Recipe Browser
 Discover authentic recipes filtered by cuisine, difficulty, dietary restrictions, and Ayurvedic dosha compatibility.
 
-![Recipe Browser](claudedocs/screenshots/recipes.png)
+![Recipe Browser](claudedocs/screenshots/recipes.jpeg)
 *Recipe browser with cultural filters and search functionality*
 
 ### Recipe Detail View
