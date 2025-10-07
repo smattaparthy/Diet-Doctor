@@ -436,4 +436,4 @@ MIT License - See LICENSE file for details
 
 **Built with ❤️ for cultural preservation and dietary freedom**
 
-*For support, questions, or feedback, please [open an issue](https://github.com/your-org/diet-doctor/issues)*
+*For support, questions, or feedback, please [open an issue](https://github.com/smattaparthy/Diet-Doctor/issues)*
