@@ -668,8 +668,9 @@
                 const result = await response.json();
 
                 if (result.success && result.data) {
-                    state.recipes = result.data.recipes || [];
-                    state.totalRecipes = result.data.total || 0;
+                    // API returns data as array directly, not data.recipes
+                    state.recipes = Array.isArray(result.data) ? result.data : (result.data.recipes || []);
+                    state.totalRecipes = result.data.total || result.data.length || 0;
                     renderRecipes();
                     updatePagination();
                 } else {
@@ -696,13 +697,29 @@
             elements.resultsCount.textContent = `Found ${state.totalRecipes} recipe${state.totalRecipes !== 1 ? 's' : ''}`;
 
             const cuisineEmojis = {
-                indian: '🍛',
+                north_indian: '🍛',
+                south_indian: '🍛',
+                gujarati: '🍛',
+                bengali: '🍛',
+                rajasthani: '🍛',
+                mughlai: '🍛',
                 mediterranean: '🫒',
                 mexican: '🌮'
             };
 
+            // Format cuisine type for display
+            const formatCuisine = (cuisineType) => {
+                if (!cuisineType) return 'Indian';
+                return cuisineType
+                    .split('_')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+            };
+
             elements.recipesGrid.innerHTML = state.recipes.map(recipe => {
-                const cuisineIcon = cuisineEmojis[recipe.cuisine?.toLowerCase()] || '🍽️';
+                const cuisineType = recipe.cuisine_type || 'north_indian';
+                const cuisineIcon = cuisineEmojis[cuisineType] || '🍽️';
+                const cuisineDisplay = formatCuisine(cuisineType);
                 const prepTime = recipe.prep_time_minutes || 30;
                 const servings = recipe.servings || 4;
                 const difficulty = recipe.difficulty || 'Medium';
@@ -716,7 +733,7 @@
                     <div class="recipe-card" onclick="viewRecipe(${recipe.id})">
                         <div class="recipe-image">
                             ${cuisineIcon}
-                            <span class="cuisine-badge">${recipe.cuisine || 'Indian'}</span>
+                            <span class="cuisine-badge">${cuisineDisplay}</span>
                         </div>
                         <div class="recipe-content">
                             <h3 class="recipe-title">${recipe.title || 'Untitled Recipe'}</h3>
