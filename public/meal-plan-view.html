@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meal Plan - Cultural Diet</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #141414;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+      padding: 20px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #e50914;
+      text-decoration: none;
+      letter-spacing: 2px;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    nav a {
+      color: #e5e5e5;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+      font-weight: 500;
+    }
+
+    nav a:hover, nav a.active {
+      color: #fff;
+    }
+
+    .logout-btn {
+      background: #e50914;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #c11119;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1400px;
+      margin: 60px auto;
+      padding: 0 60px;
+    }
+
+    /* Plan Header */
+    .plan-header {
+      margin-bottom: 40px;
+    }
+
+    .plan-title {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, #e50914 0%, #ff6b6b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .plan-meta {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #999;
+    }
+
+    .meta-item strong {
+      color: #e5e5e5;
+      font-weight: 600;
+    }
+
+    /* Balance Metrics */
+    .balance-section {
+      background: linear-gradient(135deg, rgba(40,40,40,0.95) 0%, rgba(30,30,30,0.95) 100%);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 40px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .balance-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .metric-card {
+      background: rgba(51,51,51,0.6);
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .metric-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .metric-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e50914 0%, #ff6b6b 100%);
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    /* Calendar View */
+    .calendar-section {
+      margin-bottom: 40px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-secondary {
+      background: rgba(109,109,110,0.7);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(109,109,110,0.9);
+    }
+
+    .btn-primary {
+      background: #e50914;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #c11119;
+    }
+
+    /* Day Cards */
+    .days-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .day-card {
+      background: linear-gradient(135deg, rgba(40,40,40,0.95) 0%, rgba(30,30,30,0.95) 100%);
+      border-radius: 12px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+    }
+
+    .day-card:hover {
+      border-color: rgba(229,9,20,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .day-name {
+      font-size: 22px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .day-date {
+      font-size: 14px;
+      color: #999;
+    }
+
+    /* Meals Grid */
+    .meals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .meal-card {
+      background: rgba(51,51,51,0.6);
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .meal-card:hover {
+      background: rgba(51,51,51,0.8);
+      border-color: rgba(229,9,20,0.3);
+    }
+
+    .meal-type {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #e50914;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .meal-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .meal-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 12px;
+    }
+
+    .meal-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .meal-score {
+      font-size: 12px;
+      color: #66bb6a;
+      font-weight: 600;
+    }
+
+    /* Nutrition Summary in Meal Card */
+    .meal-nutrition {
+      margin: 12px 0;
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      border-left: 3px solid #e50914;
+    }
+
+    .nutrition-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .calories-badge {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e50914;
+    }
+
+    .macros {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: #999;
+    }
+
+    .macro-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .macro-value {
+      font-weight: 600;
+      color: #e5e5e5;
+    }
+
+    /* Ayurvedic Indicator */
+    .ayurveda-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(139,69,19,0.2);
+      border: 1px solid rgba(139,69,19,0.3);
+      color: #d4a574;
+      margin-top: 8px;
+    }
+
+    .dosha-icons {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .dosha-icon {
+      font-size: 14px;
+    }
+
+    .dosha-icon.favorable {
+      color: #81c784;
+    }
+
+    .dosha-icon.neutral {
+      color: #ffa726;
+    }
+
+    .dosha-icon.unfavorable {
+      color: #ef5350;
+    }
+
+    .meal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-small {
+      flex: 1;
+      padding: 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+
+    .btn-swap {
+      background: rgba(229,9,20,0.2);
+      color: #e50914;
+    }
+
+    .btn-swap:hover {
+      background: rgba(229,9,20,0.3);
+    }
+
+    .btn-complete {
+      background: rgba(46,125,50,0.2);
+      color: #66bb6a;
+    }
+
+    .btn-complete:hover {
+      background: rgba(46,125,50,0.3);
+    }
+
+    .meal-card.completed {
+      opacity: 0.6;
+      border-color: rgba(46,125,50,0.3);
+    }
+
+    .meal-card.completed .meal-name {
+      text-decoration: line-through;
+    }
+
+    /* Loading State */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      gap: 20px;
+    }
+
+    .spinner {
+      border: 3px solid rgba(229,9,20,0.3);
+      border-radius: 50%;
+      border-top: 3px solid #e50914;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
+    /* Error State */
+    .error {
+      background: rgba(229,9,20,0.2);
+      border: 1px solid rgba(229,9,20,0.4);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      color: #ff6b6b;
+    }
+
+    /* Recipe Swap Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+    }
+
+    .modal-container {
+      background: linear-gradient(135deg, rgba(40,40,40,0.98) 0%, rgba(30,30,30,0.98) 100%);
+      border-radius: 12px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 85vh;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-backdrop.active .modal-container {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .modal-subtitle {
+      font-size: 14px;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 32px;
+      cursor: pointer;
+      transition: color 0.2s;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    .modal-body {
+      padding: 30px;
+      max-height: calc(85vh - 160px);
+      overflow-y: auto;
+    }
+
+    .modal-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+      background: rgba(229,9,20,0.5);
+      border-radius: 4px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover {
+      background: rgba(229,9,20,0.7);
+    }
+
+    .modal-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      gap: 20px;
+    }
+
+    .modal-error {
+      background: rgba(229,9,20,0.15);
+      border: 1px solid rgba(229,9,20,0.3);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      color: #ff6b6b;
+    }
+
+    .recipe-options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .recipe-option-card {
+      background: rgba(51,51,51,0.6);
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.2s;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .recipe-option-card:hover {
+      background: rgba(51,51,51,0.8);
+      border-color: rgba(229,9,20,0.3);
+      transform: translateX(5px);
+    }
+
+    .recipe-option-info {
+      flex: 1;
+    }
+
+    .recipe-option-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .recipe-option-meta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: #999;
+    }
+
+    .recipe-option-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .recipe-option-score {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .recipe-option-score.high {
+      color: #66bb6a;
+    }
+
+    .recipe-option-score.medium {
+      color: #ffa726;
+    }
+
+    .recipe-option-score.low {
+      color: #ef5350;
+    }
+
+    .recipe-option-ingredients {
+      font-size: 12px;
+      color: #999;
+      margin-top: 10px;
+      line-height: 1.5;
+      max-height: 40px;
+      overflow: hidden;
+    }
+
+    .recipe-option-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-select-recipe {
+      background: #e50914;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-select-recipe:hover {
+      background: #c11119;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(229,9,20,0.4);
+    }
+
+    .btn-select-recipe:disabled {
+      background: rgba(109,109,110,0.5);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .no-recipes-message {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .no-recipes-message h3 {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    /* Share Link Display */
+    .share-link-container {
+      background: rgba(51,51,51,0.6);
+      border-radius: 8px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .share-link-label {
+      font-size: 12px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .share-link-box {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .share-link-input {
+      flex: 1;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .share-link-input:focus {
+      outline: none;
+      border-color: #e50914;
+    }
+
+    .btn-copy {
+      background: #e50914;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-copy:hover {
+      background: #c11119;
+    }
+
+    .btn-copy.copied {
+      background: #2e7d32;
+    }
+
+    .share-info {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 12px;
+      color: #999;
+      line-height: 1.6;
+    }
+
+    .share-info strong {
+      color: #e5e5e5;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 30px;
+      }
+
+      .container {
+        padding: 0 30px;
+        margin: 40px auto;
+      }
+
+      .plan-title {
+        font-size: 32px;
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .meals-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .day-card {
+        padding: 20px;
+      }
+
+      .modal-container {
+        width: 95%;
+        max-height: 90vh;
+      }
+
+      .modal-header {
+        padding: 20px;
+      }
+
+      .modal-body {
+        padding: 20px;
+      }
+
+      .recipe-option-card {
+        flex-direction: column;
+      }
+
+      .recipe-option-actions {
+        width: 100%;
+      }
+
+      .btn-select-recipe {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="dashboard.html" class="logo">CULTURAL DIET</a>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="meal-plan.html" class="active">Meal Plan</a>
+      <a href="recipes.html">Recipes</a>
+      <a href="shopping-list.html">Shopping List</a>
+      <a href="settings.html">Settings</a>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div id="loadingArea" class="loading">
+      <div class="spinner"></div>
+      <p style="color: #999;">Loading your meal plan...</p>
+    </div>
+
+    <div id="errorArea" style="display: none;"></div>
+
+    <div id="contentArea" style="display: none;">
+      <!-- Plan Header -->
+      <div class="plan-header">
+        <h1 class="plan-title" id="planTitle">Weekly Meal Plan</h1>
+        <div class="plan-meta">
+          <div class="meta-item">
+            <strong>Start:</strong> <span id="startDate"></span>
+          </div>
+          <div class="meta-item">
+            <strong>End:</strong> <span id="endDate"></span>
+          </div>
+          <div class="meta-item">
+            <strong>Status:</strong> <span id="status"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balance Metrics -->
+      <div class="balance-section" id="balanceSection">
+        <h2 class="balance-title">Balance Metrics</h2>
+        <div class="metrics-grid" id="metricsGrid">
+          <!-- Metrics will be populated here -->
+        </div>
+      </div>
+
+      <!-- Calendar Section -->
+      <div class="calendar-section">
+        <div class="section-header">
+          <h2 class="section-title">Your Meals</h2>
+          <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="window.location.href='meal-plan.html'">New Plan</button>
+            <button class="btn btn-secondary" onclick="sharePlan()">Share Plan</button>
+            <button class="btn btn-primary" onclick="exportPlan()">Export PDF</button>
+          </div>
+        </div>
+
+        <div class="days-grid" id="daysGrid">
+          <!-- Day cards will be populated here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recipe Swap Modal -->
+  <div id="swapModal" class="modal-backdrop">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Swap Recipe</h2>
+          <p class="modal-subtitle" id="modalSubtitle">Choose an alternative recipe</p>
+        </div>
+        <button class="modal-close" onclick="closeSwapModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Content will be dynamically loaded -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div id="shareModal" class="modal-backdrop">
+    <div class="modal-container" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Share Meal Plan</h2>
+          <p class="modal-subtitle">Generate a shareable link</p>
+        </div>
+        <button class="modal-close" onclick="closeShareModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="shareModalBody">
+        <!-- Content will be dynamically loaded -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let mealPlanData = null;
+    let recipeDetails = {};
+
+    // Load meal plan on page load
+    async function loadMealPlan() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const planId = urlParams.get('id');
+
+      if (!planId) {
+        showError('No meal plan ID provided');
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/v1/meal-plans/weekly/${planId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          mealPlanData = data.data.mealPlan;
+          recipeDetails = data.data.recipeDetails.reduce((acc, recipe) => {
+            acc[recipe.id] = recipe;
+            return acc;
+          }, {});
+
+          renderMealPlan();
+        } else {
+          throw new Error(data.error || 'Failed to load meal plan');
+        }
+      } catch (error) {
+        console.error('Error loading meal plan:', error);
+        showError(error.message);
+      }
+    }
+
+    function renderMealPlan() {
+      document.getElementById('loadingArea').style.display = 'none';
+      document.getElementById('contentArea').style.display = 'block';
+
+      // Render header
+      document.getElementById('planTitle').textContent = mealPlanData.name;
+      document.getElementById('startDate').textContent = formatDate(mealPlanData.start_date);
+      document.getElementById('endDate').textContent = formatDate(mealPlanData.end_date);
+      document.getElementById('status').textContent = capitalize(mealPlanData.status);
+
+      // Render balance metrics
+      if (mealPlanData.balance_metrics) {
+        const metrics = JSON.parse(mealPlanData.balance_metrics);
+        renderBalanceMetrics(metrics);
+      }
+
+      // Group meals by date
+      const mealsByDate = {};
+      mealPlanData.items.forEach(item => {
+        if (!mealsByDate[item.date]) {
+          mealsByDate[item.date] = [];
+        }
+        mealsByDate[item.date].push(item);
+      });
+
+      // Render days
+      const daysGrid = document.getElementById('daysGrid');
+      daysGrid.innerHTML = '';
+
+      Object.keys(mealsByDate).sort().forEach(date => {
+        const dayCard = createDayCard(date, mealsByDate[date]);
+        daysGrid.appendChild(dayCard);
+      });
+    }
+
+    function renderBalanceMetrics(metrics) {
+      const metricsGrid = document.getElementById('metricsGrid');
+      metricsGrid.innerHTML = '';
+
+      const metricConfigs = [
+        { key: 'proteinVariety', label: 'Protein Variety', format: 'percent' },
+        { key: 'cookingMethodVariety', label: 'Cooking Variety', format: 'percent' },
+        { key: 'doshaBalance', label: 'Dosha Balance', format: 'percent' },
+        { key: 'culturalAuthenticity', label: 'Cultural Match', format: 'percent' },
+        { key: 'nutritionalBalance', label: 'Nutrition', format: 'percent' }
+      ];
+
+      metricConfigs.forEach(config => {
+        if (metrics[config.key] !== undefined) {
+          const card = document.createElement('div');
+          card.className = 'metric-card';
+          card.innerHTML = `
+            <div class="metric-label">${config.label}</div>
+            <div class="metric-value">${Math.round(metrics[config.key] * 100)}%</div>
+            <div class="metric-bar">
+              <div class="metric-bar-fill" style="width: ${metrics[config.key] * 100}%"></div>
+            </div>
+          `;
+          metricsGrid.appendChild(card);
+        }
+      });
+    }
+
+    function createDayCard(date, meals) {
+      const dayCard = document.createElement('div');
+      dayCard.className = 'day-card';
+
+      const dayDate = new Date(date + 'T00:00:00');
+      const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'long' });
+      const formattedDate = formatDate(date);
+
+      dayCard.innerHTML = `
+        <div class="day-header">
+          <div>
+            <div class="day-name">${dayName}</div>
+            <div class="day-date">${formattedDate}</div>
+          </div>
+        </div>
+        <div class="meals-grid" id="meals-${date}"></div>
+      `;
+
+      const mealsGrid = dayCard.querySelector(`#meals-${date}`);
+      meals.forEach(meal => {
+        const mealCard = createMealCard(meal);
+        mealsGrid.appendChild(mealCard);
+      });
+
+      return dayCard;
+    }
+
+    function createMealCard(meal) {
+      const recipe = recipeDetails[meal.recipe_id];
+      const scoreBreakdown = meal.score_breakdown ? JSON.parse(meal.score_breakdown) : null;
+
+      const mealCard = document.createElement('div');
+      mealCard.className = `meal-card ${meal.completed ? 'completed' : ''}`;
+      mealCard.id = `meal-${meal.id}`;
+
+      const totalTime = recipe ? recipe.prep_time_minutes + recipe.cook_time_minutes : 0;
+
+      // Parse nutritional info
+      let nutritionHtml = '';
+      if (recipe && recipe.nutritional_info) {
+        try {
+          const nutrition = JSON.parse(recipe.nutritional_info);
+          nutritionHtml = `
+            <div class="meal-nutrition">
+              <div class="nutrition-main">
+                <span class="calories-badge">${Math.round(nutrition.calories || 0)} cal</span>
+                <div class="macros">
+                  <span class="macro-item">P: <span class="macro-value">${Math.round(nutrition.protein_g || 0)}g</span></span>
+                  <span class="macro-item">C: <span class="macro-value">${Math.round(nutrition.carbs_g || 0)}g</span></span>
+                  <span class="macro-item">F: <span class="macro-value">${Math.round(nutrition.fat_g || 0)}g</span></span>
+                </div>
+              </div>
+            </div>
+          `;
+        } catch (e) {
+          console.error('Error parsing nutritional info:', e);
+        }
+      }
+
+      // Parse Ayurvedic info and create badge
+      let ayurvedaBadgeHtml = '';
+      if (recipe && recipe.ayurvedic_info) {
+        try {
+          const ayurveda = JSON.parse(recipe.ayurvedic_info);
+          const doshaEffects = ayurveda.dosha_effects || {};
+
+          const doshas = [
+            { name: 'V', key: 'vata', icon: '🌬️', effect: doshaEffects.vata || 'neutral' },
+            { name: 'P', key: 'pitta', icon: '🔥', effect: doshaEffects.pitta || 'neutral' },
+            { name: 'K', key: 'kapha', icon: '🌊', effect: doshaEffects.kapha || 'neutral' }
+          ];
+
+          const doshaIconsHtml = doshas.map(d => {
+            const effectClass = d.effect === 'favorable' ? 'favorable' :
+                               d.effect === 'unfavorable' ? 'unfavorable' : 'neutral';
+            const symbol = d.effect === 'favorable' ? '✓' :
+                          d.effect === 'unfavorable' ? '✗' : '~';
+            return `<span class="dosha-icon ${effectClass}" title="${d.name}: ${d.effect}">${symbol}</span>`;
+          }).join('');
+
+          ayurvedaBadgeHtml = `
+            <div class="ayurveda-badge">
+              <span>🕉️ Dosha:</span>
+              <div class="dosha-icons">${doshaIconsHtml}</div>
+            </div>
+          `;
+        } catch (e) {
+          console.error('Error parsing Ayurvedic info:', e);
+        }
+      }
+
+      mealCard.innerHTML = `
+        <div class="meal-type">${meal.meal_type}</div>
+        <div class="meal-name">${recipe ? recipe.title : 'Loading...'}</div>
+        <div class="meal-meta">
+          <span>⏱️ ${totalTime} min</span>
+          <span>🍽️ ${meal.servings} servings</span>
+        </div>
+        ${nutritionHtml}
+        ${ayurvedaBadgeHtml}
+        ${scoreBreakdown ? `<div class="meal-score">Score: ${Math.round(scoreBreakdown.totalScore * 100)}%</div>` : ''}
+        <div class="meal-actions">
+          <button class="btn-small btn-swap" onclick="swapRecipe(${meal.id})">Swap</button>
+          <button class="btn-small btn-complete" onclick="completeMeal(${meal.id}, ${meal.completed})">${meal.completed ? 'Undo' : 'Complete'}</button>
+        </div>
+      `;
+
+      mealCard.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('btn-small')) {
+          viewRecipe(meal.recipe_id);
+        }
+      });
+
+      return mealCard;
+    }
+
+    async function completeMeal(itemId, currentStatus) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/v1/meal-plans/items/${itemId}/complete`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Reload meal plan
+          await loadMealPlan();
+        } else {
+          throw new Error(data.error || 'Failed to update meal');
+        }
+      } catch (error) {
+        console.error('Error completing meal:', error);
+        alert(error.message);
+      }
+    }
+
+    let currentSwapItemId = null;
+    let currentSwapMealType = null;
+
+    async function swapRecipe(itemId) {
+      // Find the meal item to get its details
+      const mealItem = mealPlanData.items.find(item => item.id === itemId);
+      if (!mealItem) {
+        alert('Meal not found');
+        return;
+      }
+
+      currentSwapItemId = itemId;
+      currentSwapMealType = mealItem.meal_type;
+
+      const currentRecipe = recipeDetails[mealItem.recipe_id];
+
+      // Open modal
+      const modal = document.getElementById('swapModal');
+      modal.classList.add('active');
+      document.getElementById('modalSubtitle').textContent = `Choose an alternative for ${currentRecipe?.title || 'this meal'}`;
+
+      // Show loading state
+      showModalLoading();
+
+      // Fetch alternative recipes
+      try {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+
+        // Get user profile to filter by cuisine preference
+        const profileResponse = await fetch(`http://localhost:3000/api/v1/users/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        let cuisineFilter = null;
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json();
+          if (profileData.success && profileData.data.preferences) {
+            const prefs = JSON.parse(profileData.data.preferences);
+            cuisineFilter = prefs.cuisinePref;
+          }
+        }
+
+        // Fetch recipes
+        const response = await fetch('http://localhost:3000/api/v1/recipes', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Filter recipes by cuisine and exclude current recipe
+          let alternativeRecipes = data.data.filter(recipe => {
+            if (recipe.id === mealItem.recipe_id) return false; // Exclude current recipe
+            if (cuisineFilter && recipe.cuisine !== cuisineFilter) return false; // Match cuisine preference
+            return true;
+          });
+
+          // If no recipes match cuisine, show all except current
+          if (alternativeRecipes.length === 0) {
+            alternativeRecipes = data.data.filter(recipe => recipe.id !== mealItem.recipe_id);
+          }
+
+          // Sort by suitability score if available (we'll calculate a simple score)
+          alternativeRecipes = alternativeRecipes.map(recipe => {
+            let score = 0;
+
+            // Match cuisine
+            if (currentRecipe && recipe.cuisine === currentRecipe.cuisine) score += 0.3;
+
+            // Similar preparation time
+            if (currentRecipe) {
+              const currentTotal = currentRecipe.prep_time_minutes + currentRecipe.cook_time_minutes;
+              const recipeTotal = recipe.prep_time_minutes + recipe.cook_time_minutes;
+              const timeDiff = Math.abs(currentTotal - recipeTotal);
+              if (timeDiff < 15) score += 0.2;
+              else if (timeDiff < 30) score += 0.1;
+            }
+
+            // Similar complexity (based on ingredient count)
+            if (currentRecipe && currentRecipe.ingredients && recipe.ingredients) {
+              const currentIngredients = Array.isArray(currentRecipe.ingredients) ? currentRecipe.ingredients : JSON.parse(currentRecipe.ingredients);
+              const recipeIngredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : JSON.parse(recipe.ingredients);
+              const ingredientDiff = Math.abs(currentIngredients.length - recipeIngredients.length);
+              if (ingredientDiff < 3) score += 0.2;
+              else if (ingredientDiff < 5) score += 0.1;
+            }
+
+            // Vegetarian match
+            if (currentRecipe && recipe.tags) {
+              const recipeTags = Array.isArray(recipe.tags) ? recipe.tags : JSON.parse(recipe.tags);
+              const currentTags = currentRecipe.tags ? (Array.isArray(currentRecipe.tags) ? currentRecipe.tags : JSON.parse(currentRecipe.tags)) : [];
+              if (currentTags.includes('vegetarian') && recipeTags.includes('vegetarian')) score += 0.15;
+              if (currentTags.includes('vegan') && recipeTags.includes('vegan')) score += 0.15;
+            }
+
+            return { ...recipe, matchScore: score };
+          });
+
+          // Sort by match score descending
+          alternativeRecipes.sort((a, b) => b.matchScore - a.matchScore);
+
+          // Limit to top 10 options
+          alternativeRecipes = alternativeRecipes.slice(0, 10);
+
+          renderRecipeOptions(alternativeRecipes);
+        } else {
+          throw new Error(data.error || 'Failed to load recipes');
+        }
+      } catch (error) {
+        console.error('Error loading alternative recipes:', error);
+        showModalError(error.message);
+      }
+    }
+
+    function showModalLoading() {
+      const modalBody = document.getElementById('modalBody');
+      modalBody.innerHTML = `
+        <div class="modal-loading">
+          <div class="spinner"></div>
+          <p style="color: #999;">Finding alternative recipes...</p>
+        </div>
+      `;
+    }
+
+    function showModalError(message) {
+      const modalBody = document.getElementById('modalBody');
+      modalBody.innerHTML = `
+        <div class="modal-error">
+          <h3>Error Loading Recipes</h3>
+          <p>${message}</p>
+        </div>
+      `;
+    }
+
+    function renderRecipeOptions(recipes) {
+      const modalBody = document.getElementById('modalBody');
+
+      if (recipes.length === 0) {
+        modalBody.innerHTML = `
+          <div class="no-recipes-message">
+            <h3>No Alternative Recipes Found</h3>
+            <p>Try creating a new meal plan with different preferences</p>
+          </div>
+        `;
+        return;
+      }
+
+      const optionsGrid = document.createElement('div');
+      optionsGrid.className = 'recipe-options-grid';
+
+      recipes.forEach(recipe => {
+        const card = createRecipeOptionCard(recipe);
+        optionsGrid.appendChild(card);
+      });
+
+      modalBody.innerHTML = '';
+      modalBody.appendChild(optionsGrid);
+    }
+
+    function createRecipeOptionCard(recipe) {
+      const card = document.createElement('div');
+      card.className = 'recipe-option-card';
+
+      const totalTime = recipe.prep_time_minutes + recipe.cook_time_minutes;
+      const matchScore = recipe.matchScore || 0;
+
+      let scoreClass = 'low';
+      if (matchScore >= 0.6) scoreClass = 'high';
+      else if (matchScore >= 0.3) scoreClass = 'medium';
+
+      // Get first 3 ingredients as preview
+      let ingredientsPreview = '';
+      if (recipe.ingredients) {
+        try {
+          const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : JSON.parse(recipe.ingredients);
+          ingredientsPreview = ingredients.slice(0, 3).map(i => i.name || i).join(', ');
+          if (ingredients.length > 3) ingredientsPreview += ` +${ingredients.length - 3} more`;
+        } catch (e) {
+          ingredientsPreview = 'Ingredients available';
+        }
+      }
+
+      card.innerHTML = `
+        <div class="recipe-option-info">
+          <div class="recipe-option-title">${recipe.title}</div>
+          <div class="recipe-option-meta">
+            <span>🍽️ ${recipe.cuisine}</span>
+            <span>⏱️ ${totalTime} min</span>
+            <span>👤 ${recipe.servings || 4} servings</span>
+          </div>
+          <div class="recipe-option-score ${scoreClass}">
+            Match Score: ${Math.round(matchScore * 100)}%
+          </div>
+          ${ingredientsPreview ? `<div class="recipe-option-ingredients">${ingredientsPreview}</div>` : ''}
+        </div>
+        <div class="recipe-option-actions">
+          <button class="btn-select-recipe" onclick="selectRecipe(${recipe.id})">Select</button>
+        </div>
+      `;
+
+      return card;
+    }
+
+    async function selectRecipe(newRecipeId) {
+      if (!currentSwapItemId) {
+        alert('No meal selected for swapping');
+        return;
+      }
+
+      // Disable all select buttons
+      const buttons = document.querySelectorAll('.btn-select-recipe');
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.textContent = 'Swapping...';
+      });
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/v1/meal-plans/items/${currentSwapItemId}/recipe`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            newRecipeId: newRecipeId
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Close modal
+          closeSwapModal();
+
+          // Show success feedback
+          showSuccessNotification('Recipe swapped successfully!');
+
+          // Reload meal plan to show updated recipe
+          await loadMealPlan();
+        } else {
+          throw new Error(data.error || 'Failed to swap recipe');
+        }
+      } catch (error) {
+        console.error('Error swapping recipe:', error);
+        alert(`Error: ${error.message}`);
+
+        // Re-enable buttons
+        buttons.forEach(btn => {
+          btn.disabled = false;
+          btn.textContent = 'Select';
+        });
+      }
+    }
+
+    function closeSwapModal() {
+      const modal = document.getElementById('swapModal');
+      modal.classList.remove('active');
+      currentSwapItemId = null;
+      currentSwapMealType = null;
+    }
+
+    function showSuccessNotification(message) {
+      // Create temporary notification
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, rgba(46,125,50,0.95) 0%, rgba(27,94,32,0.95) 100%);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 2000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease;
+      `;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Close modal when clicking backdrop
+    document.getElementById('swapModal').addEventListener('click', (e) => {
+      if (e.target.id === 'swapModal') {
+        closeSwapModal();
+      }
+    });
+
+    document.getElementById('shareModal').addEventListener('click', (e) => {
+      if (e.target.id === 'shareModal') {
+        closeShareModal();
+      }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (document.getElementById('swapModal').classList.contains('active')) {
+          closeSwapModal();
+        }
+        if (document.getElementById('shareModal').classList.contains('active')) {
+          closeShareModal();
+        }
+      }
+    });
+
+    function viewRecipe(recipeId) {
+      window.location.href = `recipe-view.html?id=${recipeId}`;
+    }
+
+    async function exportPlan() {
+      if (!mealPlanData) {
+        alert('No meal plan loaded');
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('token');
+
+        // Show loading notification
+        showSuccessNotification('Generating PDF...');
+
+        // Call export API
+        const response = await fetch(`http://localhost:3000/api/v1/meal-plans/${mealPlanData.id}/export`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          // Get PDF blob
+          const blob = await response.blob();
+
+          // Create download link
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `meal-plan-${mealPlanData.name.replace(/\s+/g, '-')}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+
+          // Cleanup
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+
+          showSuccessNotification('PDF exported successfully!');
+        } else {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to export PDF');
+        }
+      } catch (error) {
+        console.error('Error exporting meal plan:', error);
+        alert(`Export failed: ${error.message}`);
+      }
+    }
+
+    async function sharePlan() {
+      if (!mealPlanData) {
+        alert('No meal plan loaded');
+        return;
+      }
+
+      // Open share modal
+      const modal = document.getElementById('shareModal');
+      modal.classList.add('active');
+
+      // Show loading state
+      const modalBody = document.getElementById('shareModalBody');
+      modalBody.innerHTML = `
+        <div class="modal-loading">
+          <div class="spinner"></div>
+          <p style="color: #999;">Generating share link...</p>
+        </div>
+      `;
+
+      try {
+        const token = localStorage.getItem('token');
+
+        // Call share API
+        const response = await fetch(`http://localhost:3000/api/v1/meal-plans/${mealPlanData.id}/share`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Display share link
+          const expiresDate = new Date(data.data.expiresAt);
+
+          modalBody.innerHTML = `
+            <div class="share-link-container">
+              <div class="share-link-label">Shareable Link</div>
+              <div class="share-link-box">
+                <input type="text" class="share-link-input" id="shareUrlInput" value="${data.data.shareUrl}" readonly>
+                <button class="btn-copy" onclick="copyShareLink()">Copy</button>
+              </div>
+              <div class="share-info">
+                <p><strong>Share this link</strong> with anyone to give them read-only access to your meal plan.</p>
+                <p>This link will expire on <strong>${expiresDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong> (30 days from now).</p>
+                <p>Recipients will be able to view your meal plan and recipes, but cannot make changes.</p>
+              </div>
+            </div>
+          `;
+
+          // Auto-select the URL for easy copying
+          setTimeout(() => {
+            const input = document.getElementById('shareUrlInput');
+            if (input) {
+              input.select();
+            }
+          }, 100);
+
+        } else {
+          throw new Error(data.error || 'Failed to generate share link');
+        }
+      } catch (error) {
+        console.error('Error generating share link:', error);
+        modalBody.innerHTML = `
+          <div class="modal-error">
+            <h3>Error Generating Share Link</h3>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function copyShareLink() {
+      const input = document.getElementById('shareUrlInput');
+      const button = event.target;
+
+      if (input) {
+        input.select();
+        document.execCommand('copy');
+
+        // Update button state
+        const originalText = button.textContent;
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+
+        // Show success notification
+        showSuccessNotification('Link copied to clipboard!');
+
+        // Reset button after 2 seconds
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove('copied');
+        }, 2000);
+      }
+    }
+
+    function closeShareModal() {
+      const modal = document.getElementById('shareModal');
+      modal.classList.remove('active');
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString + 'T00:00:00');
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function showError(message) {
+      document.getElementById('loadingArea').style.display = 'none';
+      document.getElementById('errorArea').style.display = 'block';
+      document.getElementById('errorArea').innerHTML = `
+        <div class="error">
+          <h2>Error Loading Meal Plan</h2>
+          <p>${message}</p>
+          <button class="btn btn-primary" style="margin-top: 20px;" onclick="window.location.href='meal-plan.html'">Create New Plan</button>
+        </div>
+      `;
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      window.location.href = 'login.html';
+    }
+
+    // Check authentication and load plan
+    if (!localStorage.getItem('token')) {
+      window.location.href = 'login.html';
+    } else {
+      loadMealPlan();
+    }
+  </script>
+</body>
+</html>

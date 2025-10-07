@@ -1,0 +1,151 @@
+# Development Docker Compose Configuration
+# Hot reload, debugging, and development database with sample data
+
+version: '3.8'
+
+services:
+  # Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      target: development  # Use development stage
+    container_name: cultural_diet_backend_dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - CORS_ORIGIN=http://localhost:3001
+      - DATABASE_PATH=/app/database/cultural_diet_dev.db
+      - JWT_SECRET=dev-jwt-secret-key-change-in-production
+      - LOG_LEVEL=debug
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/app/src
+      - ./electron:/app/electron
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.frontend.json:/app/tsconfig.frontend.json
+      # Mount database directory for persistence
+      - dev_database:/app/database
+      # Mount logs
+      - dev_logs:/app/logs
+    networks:
+      - cultural_diet_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      - db_init
+
+  # Frontend Service (React Development Server)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      target: development
+    container_name: cultural_diet_frontend_dev
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - REACT_APP_API_URL=http://localhost:3000
+      - REACT_APP_ENV=development
+      - DISPLAY=:99
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.frontend.json:/app/tsconfig.frontend.json
+      # Mount build output
+      - ./build:/app/build
+    networks:
+      - cultural_diet_network
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # Database Initialization Service
+  db_init:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      target: development
+    container_name: cultural_diet_db_init
+    environment:
+      - NODE_ENV=development
+      - DATABASE_PATH=/app/database/cultural_diet_dev.db
+    volumes:
+      - dev_database:/app/database
+      - ./src:/app/src
+    networks:
+      - cultural_diet_network
+    command: >
+      sh -c "
+        echo '🔧 Initializing database for development...' &&
+        npm run migrate &&
+        npm run seed &&
+        echo '✅ Database initialization complete!'
+      "
+    restart: "no"
+
+  # Database Management Service (optional)
+  db_admin:
+    image: nhost/sqlite-web:latest
+    container_name: cultural_diet_db_admin
+    ports:
+      - "8080:8080"
+    environment:
+      - SQLITE_DATABASE_PATH=/app/database/cultural_diet_dev.db
+    volumes:
+      - dev_database:/app/database
+    networks:
+      - cultural_diet_network
+    profiles:
+      - admin
+    depends_on:
+      - db_init
+
+  # Log Aggregation Service
+  log_aggregator:
+    image: fluent/fluent-bit:latest
+    container_name: cultural_diet_logs
+    ports:
+      - "24224:24224"
+    volumes:
+      - dev_logs:/var/log/app
+      - ./docker/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+    networks:
+      - cultural_diet_network
+    profiles:
+      - logging
+    restart: unless-stopped
+
+# Named Volumes
+volumes:
+  dev_database:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/.docker-data/dev/database
+  dev_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/.docker-data/dev/logs
+
+# Networks
+networks:
+  cultural_diet_network:
+    driver: bridge
+    name: cultural_diet_dev_network

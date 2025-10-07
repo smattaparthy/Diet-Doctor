@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Recipes - Cultural Diet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #141414;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Background gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(70, 211, 105, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, rgba(20, 20, 20, 0.98) 0%, rgba(20, 20, 20, 1) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E50914;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        nav a {
+            color: #e5e5e5;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        nav a:hover, nav a.active {
+            color: #fff;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            background: rgba(229, 9, 20, 0.2);
+            border-color: #E50914;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .page-subtitle {
+            color: #b3b3b3;
+            font-size: 1.1rem;
+        }
+
+        /* Search & Filters */
+        .search-filter-section {
+            background: #1f1f1f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #E50914;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .search-bar::placeholder {
+            color: #808080;
+        }
+
+        .filters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            color: #b3b3b3;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #E50914;
+        }
+
+        .filter-select option {
+            background: #1f1f1f;
+            color: #fff;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #E50914;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c11119;
+        }
+
+        .btn-secondary {
+            background: rgba(109,109,110,0.7);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(109,109,110,0.9);
+        }
+
+        /* Results Header */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .results-count {
+            color: #b3b3b3;
+            font-size: 15px;
+        }
+
+        /* Recipe Grid */
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .recipe-card {
+            background: #1f1f1f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+            border-color: rgba(229, 9, 20, 0.5);
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #E50914 0%, #B20710 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .cuisine-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .recipe-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .recipe-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #b3b3b3;
+            font-size: 13px;
+        }
+
+        .recipe-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #b3b3b3;
+        }
+
+        /* Loading State */
+        .loading-state {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-state.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(229, 9, 20, 0.2);
+            border-top-color: #E50914;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state.active {
+            display: block;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-message {
+            color: #b3b3b3;
+        }
+
+        /* Error State */
+        .error-state {
+            display: none;
+            text-align: center;
+            padding: 24px;
+            background: rgba(229, 9, 20, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(229, 9, 20, 0.3);
+            margin-bottom: 24px;
+        }
+
+        .error-state.active {
+            display: block;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 40px;
+        }
+
+        .pagination-btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #E50914;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            padding: 12px 20px;
+            color: #b3b3b3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .filters-container {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                flex-direction: column;
+            }
+
+            .recipes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="dashboard.html" class="logo">🌿 Cultural Diet</a>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="meal-plan.html">Meal Plan</a>
+            <a href="recipes.html" class="active">Recipes</a>
+            <a href="shopping-list.html">Shopping List</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+        <div class="user-section">
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Browse Recipes</h1>
+            <p class="page-subtitle">Discover culturally authentic recipes tailored to your preferences</p>
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="search-filter-section">
+            <input
+                type="text"
+                class="search-bar"
+                id="searchInput"
+                placeholder="Search recipes by name or ingredients..."
+            >
+
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label class="filter-label">Cuisine</label>
+                    <select class="filter-select" id="cuisineFilter">
+                        <option value="">All Cuisines</option>
+                        <option value="indian">Indian</option>
+                        <option value="mediterranean">Mediterranean</option>
+                        <option value="mexican">Mexican</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Dietary Restriction</label>
+                    <select class="filter-select" id="dietaryFilter">
+                        <option value="">All Diets</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="vegan">Vegan</option>
+                        <option value="gluten-free">Gluten-Free</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Dosha</label>
+                    <select class="filter-select" id="doshaFilter">
+                        <option value="">All Doshas</option>
+                        <option value="vata">Vata</option>
+                        <option value="pitta">Pitta</option>
+                        <option value="kapha">Kapha</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Sort By</label>
+                    <select class="filter-select" id="sortFilter">
+                        <option value="relevance">Relevance</option>
+                        <option value="rating">Rating</option>
+                        <option value="prepTime">Prep Time</option>
+                        <option value="calories">Calories</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button class="btn btn-primary" id="applyFiltersBtn">Apply Filters</button>
+                <button class="btn btn-secondary" id="clearFiltersBtn">Clear All</button>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div class="error-state" id="errorState">
+            <div class="error-message" id="errorMessage">Failed to load recipes. Please try again.</div>
+        </div>
+
+        <!-- Results Header -->
+        <div class="results-header" id="resultsHeader" style="display: none;">
+            <div class="results-count" id="resultsCount">Found 0 recipes</div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <p>Loading delicious recipes...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">🍽️</div>
+            <h2 class="empty-title">No Recipes Found</h2>
+            <p class="empty-message">Try adjusting your search criteria or filters</p>
+        </div>
+
+        <!-- Recipes Grid -->
+        <div class="recipes-grid" id="recipesGrid"></div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination" style="display: none;">
+            <button class="pagination-btn" id="prevBtn">← Previous</button>
+            <div class="pagination-info" id="pageInfo">Page 1</div>
+            <button class="pagination-btn" id="nextBtn">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        const state = {
+            recipes: [],
+            currentPage: 1,
+            totalRecipes: 0,
+            itemsPerPage: 12,
+            filters: {
+                search: '',
+                cuisine: '',
+                dietary: '',
+                dosha: '',
+                sortBy: 'relevance'
+            }
+        };
+
+        // DOM elements
+        const elements = {
+            searchInput: document.getElementById('searchInput'),
+            cuisineFilter: document.getElementById('cuisineFilter'),
+            dietaryFilter: document.getElementById('dietaryFilter'),
+            doshaFilter: document.getElementById('doshaFilter'),
+            sortFilter: document.getElementById('sortFilter'),
+            applyFiltersBtn: document.getElementById('applyFiltersBtn'),
+            clearFiltersBtn: document.getElementById('clearFiltersBtn'),
+            recipesGrid: document.getElementById('recipesGrid'),
+            loadingState: document.getElementById('loadingState'),
+            emptyState: document.getElementById('emptyState'),
+            errorState: document.getElementById('errorState'),
+            errorMessage: document.getElementById('errorMessage'),
+            resultsHeader: document.getElementById('resultsHeader'),
+            resultsCount: document.getElementById('resultsCount'),
+            pagination: document.getElementById('pagination'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            pageInfo: document.getElementById('pageInfo')
+        };
+
+        // API configuration
+        const API_BASE_URL = 'http://localhost:3000/api/v1';
+
+        // Get auth token
+        function getAuthToken() {
+            return localStorage.getItem('token');
+        }
+
+        // Check authentication
+        function checkAuth() {
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = '/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Build query string
+        function buildQueryString() {
+            const params = new URLSearchParams();
+
+            if (state.filters.search) params.append('search', state.filters.search);
+            if (state.filters.cuisine) params.append('cuisine', state.filters.cuisine);
+            if (state.filters.dietary) params.append('tags', state.filters.dietary);
+            if (state.filters.dosha) params.append('dosha', state.filters.dosha);
+            if (state.filters.sortBy) params.append('sortBy', state.filters.sortBy);
+            params.append('page', state.currentPage);
+            params.append('limit', state.itemsPerPage);
+
+            return params.toString();
+        }
+
+        // Fetch recipes
+        async function fetchRecipes() {
+            if (!checkAuth()) return;
+
+            showLoading();
+            hideError();
+
+            try {
+                const queryString = buildQueryString();
+                const response = await fetch(`${API_BASE_URL}/recipes?${queryString}`, {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('token');
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                    throw new Error('Failed to fetch recipes');
+                }
+
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    state.recipes = result.data.recipes || [];
+                    state.totalRecipes = result.data.total || 0;
+                    renderRecipes();
+                    updatePagination();
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } catch (error) {
+                console.error('Error fetching recipes:', error);
+                showError(error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Render recipes
+        function renderRecipes() {
+            if (state.recipes.length === 0) {
+                showEmpty();
+                elements.resultsHeader.style.display = 'none';
+                return;
+            }
+
+            hideEmpty();
+            elements.resultsHeader.style.display = 'flex';
+            elements.resultsCount.textContent = `Found ${state.totalRecipes} recipe${state.totalRecipes !== 1 ? 's' : ''}`;
+
+            const cuisineEmojis = {
+                indian: '🍛',
+                mediterranean: '🫒',
+                mexican: '🌮'
+            };
+
+            elements.recipesGrid.innerHTML = state.recipes.map(recipe => {
+                const cuisineIcon = cuisineEmojis[recipe.cuisine?.toLowerCase()] || '🍽️';
+                const prepTime = recipe.prep_time_minutes || 30;
+                const servings = recipe.servings || 4;
+                const difficulty = recipe.difficulty || 'Medium';
+
+                const tags = recipe.tags ? (typeof recipe.tags === 'string' ? JSON.parse(recipe.tags) : recipe.tags) : [];
+                const tagsHtml = tags.slice(0, 3).map(tag =>
+                    `<span class="tag">${tag}</span>`
+                ).join('');
+
+                return `
+                    <div class="recipe-card" onclick="viewRecipe(${recipe.id})">
+                        <div class="recipe-image">
+                            ${cuisineIcon}
+                            <span class="cuisine-badge">${recipe.cuisine || 'Indian'}</span>
+                        </div>
+                        <div class="recipe-content">
+                            <h3 class="recipe-title">${recipe.title || 'Untitled Recipe'}</h3>
+                            <div class="recipe-meta">
+                                <div class="meta-item">⏱️ ${prepTime} min</div>
+                                <div class="meta-item">🍽️ ${servings} servings</div>
+                                <div class="meta-item">📊 ${difficulty}</div>
+                            </div>
+                            <div class="recipe-tags">${tagsHtml}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function viewRecipe(recipeId) {
+            window.location.href = `recipe-view.html?id=${recipeId}`;
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(state.totalRecipes / state.itemsPerPage);
+
+            if (totalPages <= 1) {
+                elements.pagination.style.display = 'none';
+                return;
+            }
+
+            elements.pagination.style.display = 'flex';
+            elements.pageInfo.textContent = `Page ${state.currentPage} of ${totalPages}`;
+
+            elements.prevBtn.disabled = state.currentPage === 1;
+            elements.nextBtn.disabled = state.currentPage === totalPages;
+        }
+
+        function showLoading() {
+            elements.loadingState.classList.add('active');
+            elements.recipesGrid.style.display = 'none';
+            elements.emptyState.classList.remove('active');
+        }
+
+        function hideLoading() {
+            elements.loadingState.classList.remove('active');
+            elements.recipesGrid.style.display = 'grid';
+        }
+
+        function showEmpty() {
+            elements.emptyState.classList.add('active');
+            elements.recipesGrid.style.display = 'none';
+            elements.pagination.style.display = 'none';
+        }
+
+        function hideEmpty() {
+            elements.emptyState.classList.remove('active');
+            elements.recipesGrid.style.display = 'grid';
+        }
+
+        function showError(message) {
+            elements.errorState.classList.add('active');
+            elements.errorMessage.textContent = message || 'Failed to load recipes. Please try again.';
+            elements.recipesGrid.style.display = 'none';
+            elements.pagination.style.display = 'none';
+            elements.resultsHeader.style.display = 'none';
+        }
+
+        function hideError() {
+            elements.errorState.classList.remove('active');
+        }
+
+        function applyFilters() {
+            state.filters.search = elements.searchInput.value.trim();
+            state.filters.cuisine = elements.cuisineFilter.value;
+            state.filters.dietary = elements.dietaryFilter.value;
+            state.filters.dosha = elements.doshaFilter.value;
+            state.filters.sortBy = elements.sortFilter.value;
+            state.currentPage = 1;
+            fetchRecipes();
+        }
+
+        function clearFilters() {
+            elements.searchInput.value = '';
+            elements.cuisineFilter.value = '';
+            elements.dietaryFilter.value = '';
+            elements.doshaFilter.value = '';
+            elements.sortFilter.value = 'relevance';
+
+            state.filters = {
+                search: '',
+                cuisine: '',
+                dietary: '',
+                dosha: '',
+                sortBy: 'relevance'
+            };
+            state.currentPage = 1;
+            fetchRecipes();
+        }
+
+        function goToPreviousPage() {
+            if (state.currentPage > 1) {
+                state.currentPage--;
+                fetchRecipes();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function goToNextPage() {
+            const totalPages = Math.ceil(state.totalRecipes / state.itemsPerPage);
+            if (state.currentPage < totalPages) {
+                state.currentPage++;
+                fetchRecipes();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+
+        // Event listeners
+        elements.applyFiltersBtn.addEventListener('click', applyFilters);
+        elements.clearFiltersBtn.addEventListener('click', clearFilters);
+        elements.prevBtn.addEventListener('click', goToPreviousPage);
+        elements.nextBtn.addEventListener('click', goToNextPage);
+        elements.searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') applyFilters();
+        });
+
+        // Initialize
+        if (checkAuth()) {
+            fetchRecipes();
+        }
+    </script>
+</body>
+</html>

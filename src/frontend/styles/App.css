@@ -1,0 +1,178 @@
+/* App-specific Styles - Netflix Enhanced */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-primary);
+  position: relative;
+}
+
+.app::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(229, 9, 20, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(70, 211, 105, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.app[data-electron="true"] {
+  font-family: var(--font-family-primary);
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 0;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Mobile first responsive design */
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 240px; /* Desktop navigation width */
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    padding: var(--spacing-xl);
+  }
+}
+
+/* Page transitions - Netflix Smooth */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.99);
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Loading and error states */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: var(--spacing-2xl);
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--primary-color);
+  border-right: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  margin-bottom: var(--spacing-lg);
+  box-shadow: 0 0 20px rgba(229, 9, 20, 0.2);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: var(--spacing-2xl);
+  text-align: center;
+  color: var(--error-color);
+}
+
+.error-icon {
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.error-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-md);
+  color: var(--text-primary);
+}
+
+.error-message {
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-secondary);
+}
+
+/* Accessibility improvements */
+@media (prefers-contrast: high) {
+  .main-content {
+    border: 2px solid var(--text-primary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: none;
+  }
+
+  .page-enter-active,
+  .page-exit-active {
+    transition: none;
+  }
+}
+
+/* Print styles for the app */
+@media print {
+  .app-container {
+    box-shadow: none;
+    border: none;
+  }
+
+  .main-content {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .loading-spinner {
+    border-width: 2px;
+  }
+}

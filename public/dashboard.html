@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cultural Diet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #141414;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Background gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(70, 211, 105, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, rgba(20, 20, 20, 0.98) 0%, rgba(20, 20, 20, 1) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E50914;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        nav a {
+            color: #e5e5e5;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        nav a:hover, nav a.active {
+            color: #fff;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: #b3b3b3;
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            background: rgba(229, 9, 20, 0.2);
+            border-color: #E50914;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 400px;
+            padding: 60px 40px 40px;
+            background: linear-gradient(180deg, transparent 0%, #141414 100%);
+            margin-bottom: 40px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                linear-gradient(180deg, rgba(20, 20, 20, 0) 0%, rgba(20, 20, 20, 0.7) 50%, rgba(20, 20, 20, 1) 100%),
+                linear-gradient(90deg, rgba(229, 9, 20, 0.3) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: #b3b3b3;
+            margin-bottom: 24px;
+        }
+
+        .user-badges {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        /* Content Sections */
+        .container {
+            max-width: 1400px;
+            padding: 0 40px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section h2 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: #1f1f1f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            background: #2a2a2a;
+            border-color: rgba(229, 9, 20, 0.5);
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: #b3b3b3;
+            line-height: 1.5;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 24px;
+            background: #1f1f1f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #E50914 0%, #B20710 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-content h3 {
+            font-size: 14px;
+            color: #b3b3b3;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #E50914;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #b3b3b3;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .hero {
+                padding: 40px 20px 32px;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="dashboard.html" class="logo">🌿 Cultural Diet</a>
+        <nav>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="meal-plan.html">Meal Plan</a>
+            <a href="recipes.html">Recipes</a>
+            <a href="shopping-list.html">Shopping List</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+        <div class="user-section">
+            <span class="user-name" id="userName">Loading...</span>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1 id="welcomeMessage">Welcome back! 🙏</h1>
+            <p>Your personalized nutrition dashboard</p>
+            <div class="user-badges" id="userBadges"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Quick Stats -->
+        <section class="section">
+            <h2>Your Progress</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <h3>Cultural Compliance</h3>
+                        <div class="stat-value">95%</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">❤️</div>
+                    <div class="stat-content">
+                        <h3>Favorite Recipes</h3>
+                        <div class="stat-value" id="favoriteCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-content">
+                        <h3>Shopping Lists</h3>
+                        <div class="stat-value">3</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="section">
+            <h2>Quick Actions</h2>
+            <div class="cards-grid">
+                <div class="card" onclick="window.location.href='meal-plan.html'">
+                    <div class="card-icon">🍽️</div>
+                    <div class="card-title">Generate Meal Plan</div>
+                    <div class="card-description">Create a personalized weekly meal plan based on your preferences</div>
+                </div>
+                <div class="card" onclick="window.location.href='recipes.html'">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">Browse Recipes</div>
+                    <div class="card-description">Explore culturally authentic recipes tailored to your diet</div>
+                </div>
+                <div class="card" onclick="window.location.href='shopping-list.html'">
+                    <div class="card-icon">🛒</div>
+                    <div class="card-title">Create Shopping List</div>
+                    <div class="card-description">Generate a shopping list from your meal plan</div>
+                </div>
+                <div class="card" onclick="alert('Feature coming soon!')">
+                    <div class="card-icon">⚖️</div>
+                    <div class="card-title">Dosha Balance</div>
+                    <div class="card-description">Check your Ayurvedic balance and get recommendations</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cultural Tips -->
+        <section class="section">
+            <h2>Daily Cultural Wisdom</h2>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🙏</div>
+                    <div class="card-title">Daily Prayer Before Meals</div>
+                    <div class="card-description">Reciting a prayer or blessing before eating enhances the spiritual nourishment of your food.</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🧘</div>
+                    <div class="card-title">Mindful Eating Practice</div>
+                    <div class="card-description">Eat slowly and with gratitude, focusing on the flavors and textures of each bite.</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🌸</div>
+                    <div class="card-title">Seasonal Food Awareness</div>
+                    <div class="card-description">Choose foods that align with the current season for optimal digestion and energy.</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/v1';
+
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Load user data
+        function loadUserData() {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+
+                // Update welcome message
+                document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.name}! 🙏`;
+                document.getElementById('userName').textContent = user.name;
+
+                // Update badges
+                const badgesContainer = document.getElementById('userBadges');
+                const badges = [];
+
+                if (user.dosha) {
+                    badges.push(`<div class="badge">Dosha: ${user.dosha}</div>`);
+                }
+
+                if (user.cultural_background) {
+                    badges.push(`<div class="badge">${user.cultural_background}</div>`);
+                }
+
+                const cuisines = JSON.parse(user.cuisine_preferences || '[]');
+                if (cuisines.length > 0) {
+                    badges.push(`<div class="badge">Cuisine: ${cuisines[0]}</div>`);
+                }
+
+                badgesContainer.innerHTML = badges.join('');
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+
+        // Initialize
+        if (checkAuth()) {
+            loadUserData();
+        }
+    </script>
+</body>
+</html>

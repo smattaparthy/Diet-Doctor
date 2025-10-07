@@ -1,0 +1,446 @@
+/* Dashboard Page Styles - Netflix Inspired */
+
+.page-dashboard {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--surface-primary);
+}
+
+/* Hero Section */
+.dashboard-header {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: flex-end;
+  background: linear-gradient(180deg, transparent 0%, var(--surface-primary) 100%);
+  overflow: hidden;
+}
+
+.dashboard-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    linear-gradient(180deg, rgba(20, 20, 20, 0) 0%, rgba(20, 20, 20, 0.7) 50%, rgba(20, 20, 20, 1) 100%),
+    linear-gradient(90deg, rgba(229, 9, 20, 0.3) 0%, transparent 50%),
+    url('data:image/svg+xml,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(229,9,20,0.1)" stroke-width="0.5"/></svg>');
+  background-size: cover, cover, 100px 100px;
+  z-index: 0;
+}
+
+.welcome-section {
+  position: relative;
+  z-index: 1;
+  padding: 60px 40px 40px;
+  max-width: 1400px;
+  width: 100%;
+}
+
+.welcome-section h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.8);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.welcome-section p {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--text-secondary);
+  margin: 0;
+  text-shadow: 1px 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.user-summary {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.dosha-indicator,
+.cuisine-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-xs);
+}
+
+.dosha-label,
+.cuisine-label {
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dosha-value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.cuisine-value {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Dashboard Sections - Content Container */
+.dashboard-section {
+  padding: 0 40px;
+  margin-bottom: 48px;
+  max-width: 1400px;
+}
+
+.dashboard-section h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Quick Actions */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* Today's Meals - Netflix Card Style */
+.meals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.meal-card {
+  background: var(--surface-secondary);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+}
+
+.meal-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--primary-color), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.meal-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  background: var(--surface-elevated);
+}
+
+.meal-card:hover::before {
+  opacity: 1;
+}
+
+.meal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-light);
+  background: var(--surface-secondary);
+}
+
+.meal-header h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.meal-compliance {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.meal-missing {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.meal-content {
+  padding: var(--spacing-lg);
+}
+
+.meal-content h4 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.meal-content p {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+  line-height: var(--line-height-relaxed);
+}
+
+.meal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+.meal-empty {
+  padding: var(--spacing-lg);
+  text-align: center;
+}
+
+.meal-empty p {
+  color: var(--text-tertiary);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Stats Grid - Netflix Metric Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(229, 9, 20, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: var(--border-hover);
+  background: var(--surface-elevated);
+}
+
+.stat-card:hover::after {
+  opacity: 1;
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+  flex-shrink: 0;
+}
+
+.stat-content h3 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.stat-content p {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+/* Cultural Tips */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.tip-card {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.tip-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.tip-card.tip-hindu {
+  border-left: 4px solid var(--primary-color);
+}
+
+.tip-card.tip-ayurvedic {
+  border-left: 4px solid var(--secondary-color);
+}
+
+.tip-card.tip-cultural {
+  border-left: 4px solid var(--accent-color);
+}
+
+.tip-icon {
+  font-size: var(--font-size-2xl);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.tip-content h3 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.tip-content p {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* Responsive Design - Mobile First */
+@media (max-width: 1024px) {
+  .dashboard-section {
+    padding: 0 24px;
+  }
+
+  .welcome-section {
+    padding: 40px 24px 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    min-height: 320px;
+  }
+
+  .welcome-section {
+    padding: 32px 20px 24px;
+  }
+
+  .welcome-section h1 {
+    font-size: 2rem;
+  }
+
+  .user-summary {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .dashboard-section {
+    padding: 0 20px;
+    margin-bottom: 32px;
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .meals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header {
+    min-height: 280px;
+  }
+
+  .welcome-section {
+    padding: 24px 16px 20px;
+  }
+
+  .dashboard-section {
+    padding: 0 16px;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .meal-card,
+  .stat-card,
+  .tip-card {
+    border-width: 2px;
+  }
+
+  .stat-icon {
+    border: 2px solid var(--text-primary);
+  }
+}

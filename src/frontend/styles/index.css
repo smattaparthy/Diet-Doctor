@@ -1,0 +1,81 @@
+/* Import all styles */
+@import './global.css';
+@import './components.css';
+@import './navigation.css';
+@import './dashboard.css';
+@import './onboarding.css';
+@import './auth.css';
+
+/* Page-specific styles */
+.page-header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.page-header h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.page-header p {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Generic page layout */
+.page-dashboard,
+.page-meal-plan,
+.page-recipes,
+.page-shopping-list,
+.page-settings,
+.page-profile {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Loading states */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: var(--text-secondary);
+}
+
+/* Error states */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: var(--error-color);
+  text-align: center;
+}
+
+.error-container p {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Responsive page adjustments */
+@media (max-width: 768px) {
+  .page-dashboard,
+  .page-meal-plan,
+  .page-recipes,
+  .page-shopping-list,
+  .page-settings,
+  .page-profile {
+    padding: var(--spacing-md);
+  }
+
+  .page-header h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .page-header p {
+    font-size: var(--font-size-base);
+  }
+}

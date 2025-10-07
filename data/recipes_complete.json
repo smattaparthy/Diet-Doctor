@@ -1,0 +1,120 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "total_recipes": 53,
+    "cuisines": {
+      "Indian": 20,
+      "Mediterranean": 18,
+      "Mexican": 15
+    },
+    "protein_types": ["chicken", "fish", "seafood", "legumes", "dairy", "eggs", "plant-based"],
+    "cooking_methods": ["grilled", "roasted", "sauteed", "steamed", "boiled", "fried", "baked", "raw"],
+    "generated_date": "2025-01-05"
+  },
+  "recipes": [
+    {
+      "id": 1,
+      "cuisine_type": "Indian",
+      "title": "Chicken Tikka Masala",
+      "description": "Creamy tomato-based curry with marinated grilled chicken",
+      "protein_type": "chicken",
+      "cooking_method": "grilled",
+      "prep_time_minutes": 20,
+      "cook_time_minutes": 40,
+      "servings": 4,
+      "difficulty": "medium",
+      "tags": ["non-vegetarian", "gluten-free", "popular"],
+      "seasonal_tags": ["year-round", "winter"],
+      "ingredients": [
+        {"name": "chicken breast", "quantity": 1.5, "unit": "lb"},
+        {"name": "yogurt", "quantity": 1, "unit": "cup"},
+        {"name": "garam masala", "quantity": 2, "unit": "tbsp"},
+        {"name": "turmeric", "quantity": 1, "unit": "tsp"},
+        {"name": "tomato puree", "quantity": 2, "unit": "cups"},
+        {"name": "heavy cream", "quantity": 0.5, "unit": "cup"},
+        {"name": "onion", "quantity": 1, "unit": "large"},
+        {"name": "ginger-garlic paste", "quantity": 2, "unit": "tbsp"},
+        {"name": "kasuri methi", "quantity": 1, "unit": "tsp"}
+      ],
+      "instructions": [
+        "Marinate chicken in yogurt, garam masala, turmeric for 2 hours",
+        "Grill chicken until charred",
+        "Sauté onions, add ginger-garlic paste",
+        "Add tomato puree, cook for 10 minutes",
+        "Add cream and kasuri methi",
+        "Add grilled chicken, simmer for 15 minutes",
+        "Garnish with cilantro"
+      ],
+      "cultural_notes": "Popular North Indian dish, best served with naan or basmati rice",
+      "ayurvedic_info": {
+        "dosha_effects": {
+          "Vata": "balancing",
+          "Pitta": "aggravating",
+          "Kapha": "neutral"
+        },
+        "attributes": ["warm", "creamy", "spicy", "heavy"],
+        "season": "winter"
+      },
+      "nutritional_info": {
+        "calories": 420,
+        "protein_g": 32,
+        "carbs_g": 18,
+        "fat_g": 24,
+        "fiber_g": 3,
+        "sodium_mg": 680
+      }
+    },
+    {
+      "id": 2,
+      "cuisine_type": "Indian",
+      "title": "Dal Tadka",
+      "description": "Yellow lentils tempered with aromatic spices",
+      "protein_type": "legumes",
+      "cooking_method": "boiled",
+      "prep_time_minutes": 10,
+      "cook_time_minutes": 25,
+      "servings": 4,
+      "difficulty": "easy",
+      "tags": ["vegetarian", "vegan-option", "comfort-food", "quick"],
+      "seasonal_tags": ["year-round"],
+      "ingredients": [
+        {"name": "toor dal", "quantity": 1, "unit": "cup"},
+        {"name": "turmeric", "quantity": 0.5, "unit": "tsp"},
+        {"name": "ghee", "quantity": 2, "unit": "tbsp"},
+        {"name": "cumin seeds", "quantity": 1, "unit": "tsp"},
+        {"name": "mustard seeds", "quantity": 0.5, "unit": "tsp"},
+        {"name": "garlic", "quantity": 4, "unit": "cloves"},
+        {"name": "green chili", "quantity": 2, "unit": "whole"},
+        {"name": "tomato", "quantity": 1, "unit": "medium"},
+        {"name": "cilantro", "quantity": 0.25, "unit": "cup"}
+      ],
+      "instructions": [
+        "Pressure cook dal with turmeric and water for 15 minutes",
+        "Mash dal to creamy consistency",
+        "Heat ghee, add cumin and mustard seeds",
+        "Add garlic and green chili, sauté",
+        "Add chopped tomato, cook until soft",
+        "Pour tadka over dal, mix well",
+        "Garnish with cilantro"
+      ],
+      "cultural_notes": "Staple comfort food in Indian households, pairs perfectly with rice or roti",
+      "ayurvedic_info": {
+        "dosha_effects": {
+          "Vata": "balancing",
+          "Pitta": "balancing",
+          "Kapha": "neutral"
+        },
+        "attributes": ["warm", "grounding", "easy-to-digest", "nourishing"],
+        "season": "year-round"
+      },
+      "nutritional_info": {
+        "calories": 220,
+        "protein_g": 12,
+        "carbs_g": 32,
+        "fat_g": 6,
+        "fiber_g": 8,
+        "sodium_mg": 340
+      }
+    }
+  ]
+}

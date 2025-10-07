@@ -1,0 +1,58 @@
+# Backup Service Dockerfile for Cultural Diet App
+# Automated database backups with optional cloud storage
+
+FROM node:18-alpine3.18
+
+# Create non-root user
+RUN addgroup -g 1001 -S backup && \
+    adduser -S backupuser -u 1001 -G backup
+
+# Install system dependencies
+RUN apk add --no-cache \
+    sqlite \
+    aws-cli \
+    curl \
+    bash \
+    cron \
+    tzdata
+
+# Set working directory
+WORKDIR /app
+
+# Copy backup scripts
+COPY scripts/backup.sh ./scripts/
+COPY scripts/restore.sh ./scripts/
+COPY scripts/backup-cleanup.sh ./scripts/
+
+# Create directories
+RUN mkdir -p /app/backups /app/logs && \
+    chown -R backupuser:backup /app
+
+# Make scripts executable
+RUN chmod +x ./scripts/*.sh
+
+# Copy package.json for any Node.js utilities
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Switch to non-root user
+USER backupuser
+
+# Setup cron job
+ENV BACKUP_SCHEDULE="0 2 * * *"
+ENV BACKUP_RETENTION_DAYS=30
+
+# Create cron entry
+RUN (crontab -l 2>/dev/null; echo "$BACKUP_SCHEDULE /app/scripts/backup.sh") | crontab -
+
+# Health check
+HEALTHCHECK --interval=300s --timeout=30s --start-period=10s --retries=3 \
+    CMD test -f /app/logs/backup_last_success.log || exit 1
+
+# Start cron daemon
+CMD ["crond", "-f", "-l", "2"]
+
+# Labels
+LABEL maintainer="Cultural Diet Team"
+LABEL version="1.0.0"
+LABEL description="Cultural Diet App Backup Service - Automated Database Backups"

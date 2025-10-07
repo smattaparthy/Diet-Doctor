@@ -1,0 +1,445 @@
+import { Request, Response } from 'express';
+import { RecipeRepository } from '../repositories';
+import { Recipe, RecipeRow, CuisineType, Dosha } from '../types';
+import { NotFoundError } from '../utils/errors';
+
+export class RecipeController {
+  private recipeRepo: RecipeRepository;
+
+  constructor() {
+    this.recipeRepo = new RecipeRepository();
+  }
+
+  search = async (req: Request, res: Response) => {
+    try {
+      const {
+        searchTerm,
+        cuisine_type,
+        dosha,
+        difficulty,
+        max_preptime,
+        ingredients,
+        page = 1,
+        limit = 20
+      } = req.query;
+
+      let recipes: Recipe[] = [];
+      const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
+
+      // Search logic based on provided parameters
+      if (searchTerm) {
+        recipes = await this.recipeRepo.searchRecipes(
+          searchTerm as string,
+          parseInt(limit as string),
+          offset
+        );
+      } else if (ingredients) {
+        const ingredientArray = Array.isArray(ingredients)
+          ? ingredients as string[]
+          : [ingredients as string];
+        recipes = await this.recipeRepo.findByIngredients(
+          ingredientArray,
+          parseInt(limit as string),
+          offset
+        );
+      } else if (cuisine_type) {
+        recipes = await this.recipeRepo.findByCuisineType(
+          cuisine_type as CuisineType,
+          parseInt(limit as string),
+          offset
+        );
+      } else if (dosha) {
+        recipes = await this.recipeRepo.findByAyurvedicDosha(
+          dosha as Dosha,
+          parseInt(limit as string),
+          offset
+        );
+      } else if (difficulty) {
+        recipes = await this.recipeRepo.findByDifficulty(
+          difficulty as 'easy' | 'medium' | 'hard',
+          parseInt(limit as string),
+          offset
+        );
+      } else if (max_preptime) {
+        recipes = await this.recipeRepo.findByPrepTime(
+          parseInt(max_preptime as string),
+          parseInt(limit as string),
+          offset
+        );
+      } else {
+        // Default: get all recipes with pagination
+        recipes = await this.recipeRepo.findAll(
+          parseInt(limit as string),
+          offset
+        );
+      }
+
+      // Get total count for pagination
+      const total = await this.recipeRepo.count();
+
+      return res.json({
+        success: true,
+        data: recipes.map((recipeRow) => {
+          const row = recipeRow as any as RecipeRow;
+          const recipe: Recipe = {
+            ...row,
+            ingredients: JSON.parse(row.ingredients),
+            instructions: JSON.parse(row.instructions),
+            ayurvedic_info: JSON.parse(row.ayurvedic_info),
+            nutritional_info: JSON.parse(row.nutritional_info),
+            tags: row.tags ? JSON.parse(row.tags) : undefined,
+            seasonal_tags: row.seasonal_tags ? JSON.parse(row.seasonal_tags) : undefined
+          };
+          return recipe;
+        }),
+        pagination: {
+          page: parseInt(page as string),
+          limit: parseInt(limit as string),
+          total,
+          total_pages: Math.ceil(total / parseInt(limit as string))
+        }
+      });
+    } catch (error) {
+      console.error('Recipe search error:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to search recipes',
+        code: 'SEARCH_ERROR'
+      });
+    }
+  };
+
+  getById = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+
+      const recipe = await this.recipeRepo.findById(parseInt(id));
+      if (!recipe) {
+        throw new NotFoundError('Recipe');
+      }
+
+      // Get rating information
+      const ratingInfo = await this.recipeRepo.getRecipeAverageRating(parseInt(id));
+
+      // Check if it's a favorite for authenticated user
+      let isFavorite = false;
+      if (req.user) {
+        isFavorite = await this.recipeRepo.isFavorite(req.user.id, parseInt(id));
+      }
+
+      const recipeRow = recipe as any as RecipeRow;
+      const recipeData: Recipe = {
+        ...recipeRow,
+        ingredients: JSON.parse(recipeRow.ingredients),
+        instructions: JSON.parse(recipeRow.instructions),
+        ayurvedic_info: JSON.parse(recipeRow.ayurvedic_info),
+        nutritional_info: JSON.parse(recipeRow.nutritional_info),
+        tags: recipeRow.tags ? JSON.parse(recipeRow.tags) : undefined,
+        seasonal_tags: recipeRow.seasonal_tags ? JSON.parse(recipeRow.seasonal_tags) : undefined
+      };
+
+      return res.json({
+        success: true,
+        data: {
+          ...recipeData,
+          rating: ratingInfo,
+          is_favorite: isFavorite
+        }
+      });
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({
+          success: false,
+          error: error.message,
+          code: error.code
+        });
+      }
+
+      console.error('Get recipe error:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to retrieve recipe',
+        code: 'GET_RECIPE_ERROR'
+      });
+    }
+  };
+
+  create = async (req: Request, res: Response) => {
+    try {
+      const recipeData = req.body;
+
+      // Validate cultural compliance
+      const ingredients = recipeData.ingredients.map((ing: any) => ing.name);
+      if (req.user) {
+        const culturalValidation = this.validateRecipeCulturalCompliance(
+          ingredients,
+          req.user.dietary_restrictions,
+          req.user.cuisine_preferences
+        );
+        if (!culturalValidation.isValid) {
+          return res.status(422).json({
+            success: false,
+            error: 'Recipe violates cultural dietary restrictions',
+            code: 'CULTURAL_COMPLIANCE_VIOLATION',
+            details: culturalValidation.errors
+          });
+        }
+      }
+
+      const recipeId = await this.recipeRepo.createRecipe(recipeData);
+
+      // Get created recipe
+      const createdRecipe = await this.recipeRepo.findById(recipeId);
+      if (!createdRecipe) {
+        throw new Error('Failed to retrieve created recipe');
+      }
+
+      const createdRow = createdRecipe as any as RecipeRow;
+      const createdData: Recipe = {
+        ...createdRow,
+        ingredients: JSON.parse(createdRow.ingredients),
+        instructions: JSON.parse(createdRow.instructions),
+        ayurvedic_info: JSON.parse(createdRow.ayurvedic_info),
+        nutritional_info: JSON.parse(createdRow.nutritional_info),
+        tags: createdRow.tags ? JSON.parse(createdRow.tags) : undefined,
+        seasonal_tags: createdRow.seasonal_tags ? JSON.parse(createdRow.seasonal_tags) : undefined
+      };
+
+      return res.status(201).json({
+        success: true,
+        data: createdData,
+        message: 'Recipe created successfully'
+      });
+    } catch (error) {
+      console.error('Create recipe error:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create recipe',
+        code: 'CREATE_RECIPE_ERROR'
+      });
+    }
+  };
+
+  addToFavorites = async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          error: 'Authentication required',
+          code: 'AUTH_REQUIRED'
+        });
+      }
+
+      const { id } = req.params;
+      const recipeId = parseInt(id);
+
+      // Check if recipe exists
+      const recipe = await this.recipeRepo.findById(recipeId);
+      if (!recipe) {
+        throw new NotFoundError('Recipe');
+      }
+
+      const success = await this.recipeRepo.addToFavorites(req.user.id, recipeId);
+
+      return res.json({
+        success: success,
+        message: success ? 'Recipe added to favorites' : 'Recipe already in favorites'
+      });
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({
+          success: false,
+          error: error.message,
+          code: error.code
+        });
+      }
+
+      console.error('Add to favorites error:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to add recipe to favorites',
+        code: 'FAVORITE_ERROR'
+      });
+    }
+  };
+
+  removeFromFavorites = async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          error: 'Authentication required',
+          code: 'AUTH_REQUIRED'
+        });
+      }
+
+      const { id } = req.params;
+      const recipeId = parseInt(id);
+
+      const success = await this.recipeRepo.removeFromFavorites(req.user.id, recipeId);
+
+      return res.json({
+        success: success,
+        message: success ? 'Recipe removed from favorites' : 'Recipe was not in favorites'
+      });
+    } catch (error) {
+      console.error('Remove from favorites error:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to remove recipe from favorites',
+        code: 'UNFAVORITE_ERROR'
+      });
+    }
+  };
+
+  getFavorites = async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          error: 'Authentication required',
+          code: 'AUTH_REQUIRED'
+        });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = (page - 1) * limit;
+
+      const recipes = await this.recipeRepo.findUserFavorites(
+        req.user.id,
+        limit,
+        offset
+      );
+
+      // Get count of all favorites
+      const total = await this.recipeRepo['db'].all<{ count: number }>(`
+        SELECT COUNT(*) as count FROM user_recipe_favorites WHERE user_id = ?
+      `, [req.user.id]);
+
+      return res.json({
+        success: true,
+        data: recipes.map((recipeRow) => {
+          const row = recipeRow as any as RecipeRow;
+          const recipe: Recipe = {
+            ...row,
+            ingredients: JSON.parse(row.ingredients),
+            instructions: JSON.parse(row.instructions),
+            ayurvedic_info: JSON.parse(row.ayurvedic_info),
+            nutritional_info: JSON.parse(row.nutritional_info),
+            tags: row.tags ? JSON.parse(row.tags) : undefined,
+            seasonal_tags: row.seasonal_tags ? JSON.parse(row.seasonal_tags) : undefined
+          };
+          return recipe;
+        }),
+        pagination: {
+          page,
+          limit,
+          total: total[0]?.count || 0,
+          total_pages: Math.ceil((total[0]?.count || 0) / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Get favorites error:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to retrieve favorite recipes',
+        code: 'GET_FAVORITES_ERROR'
+      });
+    }
+  };
+
+  rateRecipe = async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          error: 'Authentication required',
+          code: 'AUTH_REQUIRED'
+        });
+      }
+
+      const { id } = req.params;
+      const { rating, feedback } = req.body;
+
+      if (rating < 1 || rating > 5) {
+        return res.status(400).json({
+          success: false,
+          error: 'Rating must be between 1 and 5',
+          code: 'INVALID_RATING'
+        });
+      }
+
+      const recipeId = parseInt(id);
+
+      // Check if recipe exists
+      const recipe = await this.recipeRepo.findById(recipeId);
+      if (!recipe) {
+        throw new NotFoundError('Recipe');
+      }
+
+      const success = await this.recipeRepo.updateRecipeRating(
+        req.user.id,
+        recipeId,
+        rating,
+        feedback
+      );
+
+      return res.json({
+        success: success,
+        message: success ? 'Recipe rated successfully' : 'Failed to rate recipe'
+      });
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({
+          success: false,
+          error: error.message,
+          code: error.code
+        });
+      }
+
+      console.error('Rate recipe error:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to rate recipe',
+        code: 'RATE_RECIPE_ERROR'
+      });
+    }
+  };
+
+  private validateRecipeCulturalCompliance(
+    ingredients: string[],
+    dietaryRestrictions: any[],
+    _cuisinePreferences: string[]
+  ): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+
+    // Check for red meat (Hindu dietary restriction)
+    const redMeatIngredients = ['beef', 'pork', 'veal', 'lamb', 'mutton', 'ham', 'baison'];
+    for (const ingredient of ingredients) {
+      const lowerIngredient = ingredient.toLowerCase();
+      if (redMeatIngredients.some(meat => lowerIngredient.includes(meat))) {
+        errors.push(`Red meat ingredient "${ingredient}" may violate Hindu dietary restrictions`);
+      }
+    }
+
+    // Check against user's dietary restrictions
+    for (const restriction of dietaryRestrictions) {
+      if (restriction.severity === 'strict') {
+        if (restriction.type === 'religious' && restriction.restriction.toLowerCase().includes('hindu')) {
+          const forbiddenIngredients = ['beef', 'pork'];
+          for (const ingredient of ingredients) {
+            if (forbiddenIngredients.some(forbidden => ingredient.toLowerCase().includes(forbidden))) {
+              errors.push(`Ingredient "${ingredient}" violates Hindu dietary restrictions`);
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }
+}

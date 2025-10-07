@@ -1,0 +1,82 @@
+# Multi-stage Backend Dockerfile for Cultural Diet App
+# Node.js + Express + SQLite + TypeScript
+
+# Stage 1: Build stage
+FROM node:18-alpine3.18 AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies for sqlite3 compilation
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    sqlite-dev
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig*.json ./
+
+# Install all dependencies (including devDependencies for build)
+RUN npm ci --only=production=false && npm cache clean --force
+
+# Copy source code
+COPY src/ ./src/
+COPY electron/ ./electron/
+
+# Create dist directory and build
+RUN npm run build
+
+# Stage 2: Production stage
+FROM node:18-alpine3.18 AS production
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S culturaldiet -u 1001
+
+# Set working directory
+WORKDIR /app
+
+# Install runtime only dependencies
+RUN apk add --no-cache \
+    sqlite \
+    curl \
+    && rm -rf /var/cache/apk/*
+
+# Copy package files
+COPY package*.json ./
+
+# Install only production dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy built application from builder stage
+COPY --from=builder --chown=culturaldiet:nodejs /app/dist ./dist
+COPY --from=builder --chown=culturaldiet:nodejs /app/node_modules ./node_modules
+
+# Create necessary directories
+RUN mkdir -p database logs uploads && \
+    chown -R culturaldiet:nodejs database logs uploads
+
+# Switch to non-root user
+USER culturaldiet
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+# Environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV DATABASE_PATH=/app/database/cultural_diet.db
+
+# Default command
+CMD ["node", "dist/server.js"]
+
+# Labels for metadata
+LABEL maintainer="Cultural Diet Team"
+LABEL version="1.0.0"
+LABEL description="Cultural Diet App Backend - Ayurvedic and Traditional Nutrition Management API"
