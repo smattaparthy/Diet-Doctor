@@ -44,7 +44,7 @@ A comprehensive local-first application for managing cultural dietary preference
 ### Dashboard
 The main dashboard provides an overview of your current meal plan, recent recipes, and quick actions.
 
-![Dashboard](claudedocs/screenshots/dashboard.png)
+![Dashboard](claudedocs/screenshots/dashboard.jpeg)
 *Dashboard showing weekly meal plan overview, recipe suggestions, and quick navigation*
 
 ### Recipe Browser
