@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import path from 'path';
 
 // Import middleware
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
@@ -43,8 +44,10 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts for HTML pages
+      scriptSrcAttr: ["'unsafe-inline'"], // Allow inline event handlers (onclick, etc.)
       imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'"], // Allow fetch/XHR to same origin
     },
   },
 }));
@@ -56,6 +59,24 @@ app.use(compression());
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Serve static files from build directory with proper caching
+app.use(express.static(path.join(__dirname, '../build'), {
+  setHeaders: (res, filepath) => {
+    // Don't cache HTML files to ensure CSP updates are picked up
+    if (filepath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
+
+// Redirect root to login page with cache-busting
+app.get('/', (_req, res) => {
+  // Add timestamp to bust Safari's aggressive caching
+  res.redirect(`/login.html?v=${Date.now()}`);
+});
 
 // Health check endpoint
 app.get('/health', (_req, res) => {

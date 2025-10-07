@@ -56,25 +56,25 @@ Discover authentic recipes filtered by cuisine, difficulty, dietary restrictions
 ### Recipe Detail View
 Detailed recipe view with ingredients, step-by-step cooking instructions, nutritional information, and Ayurvedic guidance.
 
-![Recipe Detail](claudedocs/screenshots/recipe-detail.png)
+![Recipe Detail](claudedocs/screenshots/recipe-detail.jpeg)
 *Recipe detail page showing Punjabi Tandoori Chicken with complete cooking instructions*
 
 ### Meal Plan Generator
 Generate personalized 7-day meal plans based on your cultural preferences, dietary restrictions, and Ayurvedic dosha.
 
-![Meal Plan](claudedocs/screenshots/meal-plan.png)
+![Meal Plan](claudedocs/screenshots/meal-plan.jpeg)
 *Weekly meal plan with breakfast, lunch, and dinner for 7 days*
 
 ### Shopping List
 Automatically generate shopping lists from meal plans, organized by retailer and aisle for efficient shopping.
 
-![Shopping List](claudedocs/screenshots/shopping-list.png)
+![Shopping List](claudedocs/screenshots/shopping-list.jpeg)
 *Shopping list grouped by retailer (Patel Brothers, Trader Joe's, Costco) with aisle organization*
 
 ### Settings & Profile
 Manage your profile, cuisine preferences, dietary restrictions, Ayurvedic dosha, and account settings.
 
-![Settings](claudedocs/screenshots/settings.png)
+![Settings](claudedocs/screenshots/settings.jpeg)
 *User settings page with profile management, preferences, and password change*
 
 ---

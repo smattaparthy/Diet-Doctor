@@ -128,13 +128,45 @@ export class RecipeController {
       }
 
       const recipeRow = recipe as any as RecipeRow;
+
+      // Parse JSON fields
+      const parsedIngredients = JSON.parse(recipeRow.ingredients);
+      const parsedAyurvedicInfo = JSON.parse(recipeRow.ayurvedic_info);
+      const parsedNutritionalInfo = JSON.parse(recipeRow.nutritional_info);
+
+      // Generate tags dynamically from recipe data
+      const tags: string[] = [];
+
+      // Check if vegetarian (no meat/fish ingredients)
+      const meatKeywords = ['chicken', 'fish', 'lamb', 'mutton', 'seafood', 'shrimp', 'prawn'];
+      const hasNoMeat = !parsedIngredients.some((ing: any) =>
+        meatKeywords.some(meat => (ing.name || ing.item || '').toLowerCase().includes(meat))
+      );
+      if (hasNoMeat) tags.push('vegetarian');
+
+      // Check if vegan (no animal products)
+      const animalProducts = ['yogurt', 'milk', 'ghee', 'butter', 'cheese', 'paneer', 'cream', 'egg'];
+      const hasNoAnimalProducts = !parsedIngredients.some((ing: any) =>
+        animalProducts.some(animal => (ing.name || ing.item || '').toLowerCase().includes(animal))
+      );
+      if (hasNoMeat && hasNoAnimalProducts) tags.push('vegan');
+
+      // Add difficulty as tag
+      if (recipeRow.difficulty === 'easy') tags.push('beginner-friendly');
+
+      // Add prep time tag
+      if (recipeRow.prep_time_minutes + recipeRow.cook_time_minutes <= 30) tags.push('quick');
+
+      // Add cuisine type as tag
+      if (recipeRow.cuisine_type) tags.push(recipeRow.cuisine_type.replace(/_/g, '-'));
+
       const recipeData: Recipe = {
         ...recipeRow,
-        ingredients: JSON.parse(recipeRow.ingredients),
+        ingredients: parsedIngredients,
         instructions: JSON.parse(recipeRow.instructions),
-        ayurvedic_info: JSON.parse(recipeRow.ayurvedic_info),
-        nutritional_info: JSON.parse(recipeRow.nutritional_info),
-        tags: recipeRow.tags ? JSON.parse(recipeRow.tags) : undefined,
+        ayurvedic_info: parsedAyurvedicInfo,
+        nutritional_info: parsedNutritionalInfo,
+        tags: tags,
         seasonal_tags: recipeRow.seasonal_tags ? JSON.parse(recipeRow.seasonal_tags) : undefined
       };
 
