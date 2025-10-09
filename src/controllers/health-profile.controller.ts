@@ -50,6 +50,10 @@ export class HealthProfileController {
    * Submit questionnaire answers and calculate dosha scores
    *
    * Body: { answers: Answer[] }
+   * Supports both formats for selectedOptions:
+   *   - Numeric indices: [0, 1, 2]
+   *   - Text values: ["option text 1", "option text 2"]
+   *
    * Returns: Dosha calculation results + saves to user profile
    */
   submitDoshaAssessment = async (req: Request, res: Response) => {
@@ -68,8 +72,11 @@ export class HealthProfileController {
         throw new ValidationError('Answers must be an array');
       }
 
+      // Normalize answers to support both text values and numeric indices
+      const normalizedAnswers = this.normalizeAnswerFormat(answers);
+
       // Validate and calculate dosha scores
-      const validation = this.doshaCalculator.validateAnswers(answers);
+      const validation = this.doshaCalculator.validateAnswers(normalizedAnswers);
       if (!validation.isValid) {
         return res.status(400).json({
           success: false,
@@ -80,7 +87,7 @@ export class HealthProfileController {
       }
 
       // Calculate dosha scores
-      const result: DoshaCalculationResult = this.doshaCalculator.calculateScores(answers);
+      const result: DoshaCalculationResult = this.doshaCalculator.calculateScores(normalizedAnswers);
 
       // Update user profile with primary dosha
       const updateSuccess = await this.userRepo.updateProfile(req.user.id, {
@@ -326,6 +333,92 @@ export class HealthProfileController {
       });
     }
   };
+
+  /**
+   * Helper: Normalize answer format to support both text values and numeric indices
+   *
+   * Accepts selectedOptions as either:
+   *   - Numeric indices: [0, 1]
+   *   - Text values: ["option text 1", "option text 2"]
+   *
+   * Returns normalized answers with numeric indices
+   */
+  private normalizeAnswerFormat(answers: any[]): any[] {
+    const questions = this.doshaCalculator.getQuestions();
+    const questionMap = new Map<string, any>();
+
+    // Build question lookup map
+    questions.sections.forEach(section => {
+      section.questions.forEach(q => {
+        questionMap.set(q.id, q);
+      });
+    });
+
+    return answers.map(answer => {
+      const { questionId, selectedOptions } = answer;
+
+      // If already numeric indices, return as is
+      if (selectedOptions.every((opt: any) => typeof opt === 'number')) {
+        return answer;
+      }
+
+      // Convert text values to indices
+      const question = questionMap.get(questionId);
+      if (!question) {
+        throw new ValidationError(
+          `Invalid question ID: ${questionId}. ` +
+          `Example valid format: {"questionId": "q1_body_frame", "selectedOptions": [0]} or ` +
+          `{"questionId": "q1_body_frame", "selectedOptions": ["Slim/thin, hard to gain weight"]}`
+        );
+      }
+
+      const normalizedIndices: number[] = [];
+      const invalidTexts: string[] = [];
+
+      for (const optionValue of selectedOptions) {
+        if (typeof optionValue === 'number') {
+          // Mixed format - keep numeric as is
+          normalizedIndices.push(optionValue);
+        } else if (typeof optionValue === 'string') {
+          // Find matching option by text (case-insensitive, trimmed)
+          const normalizedText = optionValue.trim().toLowerCase();
+          const optionIndex = question.options.findIndex((opt: any) =>
+            opt.text.trim().toLowerCase() === normalizedText
+          );
+
+          if (optionIndex === -1) {
+            invalidTexts.push(optionValue);
+          } else {
+            normalizedIndices.push(optionIndex);
+          }
+        } else {
+          throw new ValidationError(
+            `Invalid option type for question ${questionId}. ` +
+            `Expected number or string, got ${typeof optionValue}. ` +
+            `Example: {"selectedOptions": [0]} or {"selectedOptions": ["option text"]}`
+          );
+        }
+      }
+
+      // Report invalid text values with helpful error
+      if (invalidTexts.length > 0) {
+        const validOptions = question.options.map((opt: any, idx: number) =>
+          `  [${idx}] "${opt.text}"`
+        ).join('\n');
+
+        throw new ValidationError(
+          `Invalid option text(s) for question ${questionId}: ${invalidTexts.map(t => `"${t}"`).join(', ')}.\n` +
+          `Valid options are:\n${validOptions}\n\n` +
+          `You can use either indices (e.g., [0, 1]) or exact text matches (e.g., ["${question.options[0]?.text}"])`
+        );
+      }
+
+      return {
+        ...answer,
+        selectedOptions: normalizedIndices
+      };
+    });
+  }
 
   /**
    * Helper: Get balance status based on dosha type

@@ -208,7 +208,7 @@ export class UserHealthProfileRepository extends BaseRepository<UserHealthProfil
       activity_level: row.activity_level as 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active',
       stress_level: row.stress_level as 'low' | 'moderate' | 'high',
       sleep_quality: row.sleep_quality as 'poor' | 'fair' | 'good' | 'excellent',
-      assessment_completed_at: row.assessment_completed_at || undefined,
+      assessment_completed_at: row.assessment_completed_at ?? undefined,
       last_updated_at: row.last_updated_at,
       created_at: row.created_at
     };

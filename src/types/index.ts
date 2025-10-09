@@ -423,9 +423,9 @@ export interface UserHealthProfile {
   sleep_quality: 'poor' | 'fair' | 'good' | 'excellent';
 
   // Timestamps
-  assessment_completed_at?: string;
-  last_updated_at?: string;
-  created_at?: string;
+  assessment_completed_at?: string | undefined;
+  last_updated_at?: string | undefined;
+  created_at?: string | undefined;
 }
 
 export interface UserHealthProfileRow {

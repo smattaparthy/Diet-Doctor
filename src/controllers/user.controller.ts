@@ -11,6 +11,35 @@ export class UserController {
     this.userRepo = new UserRepository();
   }
 
+  /**
+   * Parse JSON string fields in user object to proper arrays
+   */
+  private parseUserJsonFields(user: any): any {
+    const parsed = { ...user };
+
+    // Parse cuisine_preferences if it's a string
+    if (parsed.cuisine_preferences && typeof parsed.cuisine_preferences === 'string') {
+      try {
+        parsed.cuisine_preferences = JSON.parse(parsed.cuisine_preferences);
+      } catch (error) {
+        console.error('Failed to parse cuisine_preferences:', error);
+        parsed.cuisine_preferences = [];
+      }
+    }
+
+    // Parse dietary_restrictions if it's a string
+    if (parsed.dietary_restrictions && typeof parsed.dietary_restrictions === 'string') {
+      try {
+        parsed.dietary_restrictions = JSON.parse(parsed.dietary_restrictions);
+      } catch (error) {
+        console.error('Failed to parse dietary_restrictions:', error);
+        parsed.dietary_restrictions = [];
+      }
+    }
+
+    return parsed;
+  }
+
   register = async (req: Request, res: Response) => {
     try {
       const userData: CreateUserRequest = req.body;
@@ -40,8 +69,8 @@ export class UserController {
         email: createdUser.email
       });
 
-      // Remove password hash from response
-      const { password_hash, ...userResponse } = createdUser;
+      // Remove password hash from response and parse JSON fields
+      const { password_hash, ...userResponse } = this.parseUserJsonFields(createdUser);
 
       return res.status(201).json({
         success: true,
@@ -99,8 +128,8 @@ export class UserController {
         email: user.email
       });
 
-      // Remove password hash from response
-      const { password_hash, ...userResponse } = user;
+      // Remove password hash from response and parse JSON fields
+      const { password_hash, ...userResponse } = this.parseUserJsonFields(user);
 
       return res.json({
         success: true,
@@ -135,8 +164,8 @@ export class UserController {
         throw new NotFoundError('User');
       }
 
-      // Remove password hash from response
-      const { password_hash, ...userResponse } = user;
+      // Remove password hash from response and parse JSON fields
+      const { password_hash, ...userResponse } = this.parseUserJsonFields(user);
 
       // Get additional user stats
       const stats = await this.userRepo.getUserStats(user.id);
@@ -189,8 +218,8 @@ export class UserController {
         throw new NotFoundError('User');
       }
 
-      // Remove password hash from response
-      const { password_hash, ...userResponse } = updatedUser;
+      // Remove password hash from response and parse JSON fields
+      const { password_hash, ...userResponse } = this.parseUserJsonFields(updatedUser);
 
       return res.json({
         success: true,

@@ -21,7 +21,7 @@ export class RecipeRepository extends BaseRepository<Recipe> {
   async findByAyurvedicDosha(dosha: Dosha, limit: number = 50, offset: number = 0): Promise<Recipe[]> {
     const query = `
       SELECT * FROM recipes
-      WHERE json_extract(ayurvedic_info, '$.dominantDosha') LIKE '%' || ? || '%'
+      WHERE json_extract(ayurvedic_info, '$.dominant_dosha') LIKE '%' || ? || '%'
       ORDER BY created_at DESC
       LIMIT ? OFFSET ?
     `;

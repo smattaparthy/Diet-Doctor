@@ -4,8 +4,7 @@ import {
   ScoredRecipe,
   RecipeScore,
   RecommendationOptions,
-  RecommendationResult,
-  CuisineType
+  RecommendationResult
 } from '../types';
 import { RecipeRepository, UserHealthProfileRepository } from '../repositories';
 import { RecipeFilterService } from './recipe-filter.service';

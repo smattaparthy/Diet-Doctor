@@ -15,6 +15,7 @@ export class RecipeController {
       const {
         searchTerm,
         cuisine_type,
+        cuisine,
         dosha,
         difficulty,
         max_preptime,
@@ -22,6 +23,34 @@ export class RecipeController {
         page = 1,
         limit = 20
       } = req.query;
+
+      // Parameter aliasing: accept both 'cuisine_type' and 'cuisine'
+      const cuisineType = cuisine_type || cuisine;
+
+      // Validate cuisine parameter if provided
+      const validCuisineTypes = [
+        'north_indian',
+        'south_indian',
+        'mughlai',
+        'gujarati',
+        'punjabi',
+        'bengali',
+        'rajasthani',
+        'chinese',
+        'japanese',
+        'thai',
+        'mediterranean',
+        'mexican'
+      ];
+
+      if (cuisineType && !validCuisineTypes.includes(cuisineType as string)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid cuisine type',
+          code: 'INVALID_CUISINE_TYPE',
+          validValues: validCuisineTypes
+        });
+      }
 
       let recipes: Recipe[] = [];
       const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
@@ -42,9 +71,9 @@ export class RecipeController {
           parseInt(limit as string),
           offset
         );
-      } else if (cuisine_type) {
+      } else if (cuisineType) {
         recipes = await this.recipeRepo.findByCuisineType(
-          cuisine_type as CuisineType,
+          cuisineType as CuisineType,
           parseInt(limit as string),
           offset
         );

@@ -1,4 +1,4 @@
-import { Recipe, UserHealthProfile, CuisineType, HealthGoalMapping } from '../types';
+import { Recipe, UserHealthProfile, HealthGoalMapping } from '../types';
 
 /**
  * PreferenceScoringService
@@ -233,8 +233,6 @@ export class PreferenceScoringService {
    * Infer recipe spice level from ayurvedic info and tags
    */
   private inferRecipeSpiceLevel(recipe: Recipe): 'mild' | 'medium' | 'hot' {
-    const recipeRow = recipe as any;
-
     // Check ayurvedic info for pungent taste (indicates spicy)
     if (recipe.ayurvedic_info?.taste_profile?.includes('pungent')) {
       return 'hot';
